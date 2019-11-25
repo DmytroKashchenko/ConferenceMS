@@ -1,12 +1,10 @@
 package ua.dmytrokashchenko.conferencesms.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -16,7 +14,7 @@ import java.util.List;
 @Table(name = "events")
 public class EventEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "event_id")
     private Long id;
 
@@ -36,6 +34,18 @@ public class EventEntity {
     @JoinColumn(name = "address_id", nullable = false)
     private AddressEntity addressEntity;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "eventEntity")
+    @Setter(AccessLevel.NONE)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinTable(name = "event_presentations",
+            joinColumns = {@JoinColumn(name = "event_id", referencedColumnName = "event_id")},
+            inverseJoinColumns = {@JoinColumn(name = "presentation_id",
+                    referencedColumnName = "presentation_id", unique = true)})
     private List<PresentationEntity> presentationEntities;
+
+    public void addPresentationEntity(PresentationEntity presentationEntity) {
+        if (presentationEntities == null) {
+            presentationEntities = new ArrayList<>();
+        }
+        presentationEntities.add(presentationEntity);
+    }
 }

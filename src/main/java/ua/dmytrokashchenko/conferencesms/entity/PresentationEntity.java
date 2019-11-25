@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Table(name = "presentations")
 public class PresentationEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "presentation_id")
     private Long id;
 
@@ -35,9 +35,9 @@ public class PresentationEntity {
     @Column(name = "duration")
     private Duration duration;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "event_id", nullable = false)
-    private EventEntity eventEntity;
+//    @ManyToOne(fetch = FetchType.EAGER)
+//    @JoinColumn(name = "event_id", nullable = false)
+//    private EventEntity eventEntity;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)

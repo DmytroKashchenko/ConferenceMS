@@ -31,13 +31,14 @@ public class PresentationMapper {
         EventEntity eventEntity = new EventEntity();
         eventEntity.setId(eventId);
 
-        return new PresentationEntity(presentation.getId(),
+/*        return new PresentationEntity(presentation.getId(),
                 userMapper.mapUserToEntity(presentation.getAuthor()),
                 presentation.getTopic(),
                 presentation.getDescription(),
                 presentation.getStartDate(),
                 presentation.getDuration(),
                 eventEntity,
-                PresentationStatusEntity.valueOf(presentation.getStatus().name()));
+                PresentationStatusEntity.valueOf(presentation.getStatus().name()));*/
+return null;
     }
 }
