@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -16,4 +17,11 @@ public class Event {
     private LocalDateTime finishDate;
     private Address address;
     private List<Presentation> presentations;
+
+    public void addPresentation(Presentation presentation) {
+        if (presentations == null) {
+            presentations = new ArrayList<>();
+        }
+        presentations.add(presentation);
+    }
 }

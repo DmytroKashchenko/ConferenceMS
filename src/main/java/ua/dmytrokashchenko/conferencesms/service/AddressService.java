@@ -1,6 +1,7 @@
 package ua.dmytrokashchenko.conferencesms.service;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import ua.dmytrokashchenko.conferencesms.domain.Address;
 
 public interface AddressService {
@@ -10,5 +11,5 @@ public interface AddressService {
 
     Address getAddressById(Long id);
 
-    Page<Address> getAddress(Integer pageNo, Integer pageSize, String sortBy);
+    Page<Address> getAddresses(Pageable pageable);
 }

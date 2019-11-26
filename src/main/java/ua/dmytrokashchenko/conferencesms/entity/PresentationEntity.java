@@ -1,12 +1,12 @@
 package ua.dmytrokashchenko.conferencesms.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -35,11 +35,19 @@ public class PresentationEntity {
     @Column(name = "duration")
     private Duration duration;
 
-//    @ManyToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "event_id", nullable = false)
-//    private EventEntity eventEntity;
-
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private PresentationStatusEntity status;
+
+    @ElementCollection
+    @CollectionTable(name = "presentation_registrations")
+    @MapKeyJoinColumn(name = "user_id")
+    @Column(name = "is_visitor")
+    private Map<UserEntity, Boolean> registrations;
+
+    @ElementCollection
+    @CollectionTable(name = "user_ratings")
+    @MapKeyJoinColumn(name = "user_id")
+    @Column(name = "rating")
+    private Map<UserEntity, Integer> ratings;
 }

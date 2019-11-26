@@ -1,6 +1,7 @@
 package ua.dmytrokashchenko.conferencesms.service.validator;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 import ua.dmytrokashchenko.conferencesms.domain.Event;
 import ua.dmytrokashchenko.conferencesms.domain.Presentation;
 import ua.dmytrokashchenko.conferencesms.domain.Role;
@@ -11,6 +12,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component
 public class EventValidator implements Validator<Event> {
     private static final Logger LOGGER = Logger.getLogger(EventValidator.class);
 
@@ -30,6 +32,9 @@ public class EventValidator implements Validator<Event> {
     }
 
     private void validateAuthors(Event event) {
+        if (event.getPresentations() == null || event.getPresentations().isEmpty()) {
+            return;
+        }
         for (Presentation presentation : event.getPresentations()) {
             if (presentation.getAuthor() == null) {
                 LOGGER.warn("Invalid author of the presentation");

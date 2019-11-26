@@ -3,9 +3,7 @@ package ua.dmytrokashchenko.conferencesms.service.impl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ua.dmytrokashchenko.conferencesms.domain.Address;
 import ua.dmytrokashchenko.conferencesms.repository.AddressRepository;
@@ -57,12 +55,12 @@ public class AddressServiceImpl implements AddressService {
         return addressMapper.mapEntityToAddress(addressRepository.findById(id).get());
     }
 
-    public Page<Address> getAddress(Integer pageNo, Integer pageSize, String sortBy) {
-        if (pageNo == null || pageSize == null) {
-            LOGGER.warn("Invalid page");
-            throw new AddressServiceException("Invalid page");
+    @Override
+    public Page<Address> getAddresses(Pageable pageable) {
+        if (pageable == null) {
+            LOGGER.warn("Invalid page number or size");
+            throw new AddressServiceException("Invalid page number or size");
         }
-        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-        return addressRepository.findAll(paging).map(addressMapper::mapEntityToAddress);
+        return addressRepository.findAll(pageable).map(addressMapper::mapEntityToAddress);
     }
 }

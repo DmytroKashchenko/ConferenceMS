@@ -3,9 +3,14 @@ package ua.dmytrokashchenko.conferencesms.service.mapper;
 import org.springframework.stereotype.Component;
 import ua.dmytrokashchenko.conferencesms.domain.Presentation;
 import ua.dmytrokashchenko.conferencesms.domain.PresentationStatus;
-import ua.dmytrokashchenko.conferencesms.entity.EventEntity;
+import ua.dmytrokashchenko.conferencesms.domain.User;
 import ua.dmytrokashchenko.conferencesms.entity.PresentationEntity;
 import ua.dmytrokashchenko.conferencesms.entity.PresentationStatusEntity;
+import ua.dmytrokashchenko.conferencesms.entity.UserEntity;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 @Component
 public class PresentationMapper {
@@ -24,21 +29,40 @@ public class PresentationMapper {
                 .duration(presentationEntity.getDuration())
                 .author(userMapper.mapEntityToUser(presentationEntity.getAuthor()))
                 .status(PresentationStatus.valueOf(presentationEntity.getStatus().name()))
+                .ratings(remapUserEntityMap(presentationEntity.getRatings()))
+                .registrations(remapUserEntityMap(presentationEntity.getRegistrations()))
                 .build();
     }
 
-    public PresentationEntity mapPresentationToEntity(Presentation presentation, Long eventId) {
-        EventEntity eventEntity = new EventEntity();
-        eventEntity.setId(eventId);
+    public PresentationEntity mapPresentationToEntity(Presentation presentation) {
+        PresentationEntity presentationEntity = new PresentationEntity();
+        presentationEntity.setId(presentation.getId());
+        presentationEntity.setTopic(presentation.getTopic());
+        presentationEntity.setDescription(presentation.getDescription());
+        presentationEntity.setAuthor(userMapper.mapUserToEntity(presentation.getAuthor()));
+        presentationEntity.setStartDate(presentation.getStartDate());
+        presentationEntity.setDuration(presentation.getDuration());
+        presentationEntity.setStatus(PresentationStatusEntity.valueOf(presentation.getStatus().name()));
+        presentationEntity.setRegistrations(remapUserMap(presentation.getRegistrations()));
+        presentationEntity.setRatings(remapUserMap(presentation.getRatings()));
+        return presentationEntity;
+    }
 
-/*        return new PresentationEntity(presentation.getId(),
-                userMapper.mapUserToEntity(presentation.getAuthor()),
-                presentation.getTopic(),
-                presentation.getDescription(),
-                presentation.getStartDate(),
-                presentation.getDuration(),
-                eventEntity,
-                PresentationStatusEntity.valueOf(presentation.getStatus().name()));*/
-return null;
+    private <T> Map<User, T> remapUserEntityMap(Map<UserEntity, T> tMap) {
+        Map<User, T> mapped = new HashMap<>();
+        Set<UserEntity> keys = tMap.keySet();
+        for (UserEntity userEntity : keys) {
+            mapped.put(userMapper.mapEntityToUser(userEntity), tMap.get(userEntity));
+        }
+        return mapped;
+    }
+
+    private <T> Map<UserEntity, T> remapUserMap(Map<User, T> tMap) {
+        Map<UserEntity, T> mapped = new HashMap<>();
+        Set<User> keys = tMap.keySet();
+        for (User user : keys) {
+            mapped.put(userMapper.mapUserToEntity(user), tMap.get(user));
+        }
+        return mapped;
     }
 }
