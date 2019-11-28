@@ -5,7 +5,9 @@ import lombok.Data;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 @Data
 @Builder
@@ -28,7 +30,10 @@ public class Presentation {
     }
 
     public Map<User, Integer> getRatings() {
-        return Objects.isNull(ratings) ? new HashMap<>() : ratings;
+        if (Objects.isNull(ratings)) {
+            ratings = new HashMap<>();
+        }
+        return ratings;
     }
 
     public void addRegistration(User user) {

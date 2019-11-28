@@ -19,21 +19,15 @@ public class UserEntity {
     private Long id;
 
     @Column(name = "first_name")
-    @NotEmpty(message = "*Please provide your name")
     private String firstName;
 
     @Column(name = "last_name")
-    @NotEmpty(message = "*Please provide your last name")
     private String lastName;
 
-    @Column(name = "email")
-    @Email(message = "*Please provide a valid Email") // uniq - need to add
-    @NotEmpty(message = "*Please provide an email") //domain - перенести
+    @Column(name = "email", unique = true)
     private String email;
 
     @Column(name = "password")
-    @Length(min = 6, message = "*Your password must have at least 6 characters") // -- таке перенести
-    @NotEmpty(message = "*Please provide your password")  // -- таке перенести
     private String password;
 
     @Column(name = "role")

@@ -216,6 +216,17 @@ public class EventsController {
         return modelAndView;
     }
 
+    @GetMapping("/events/upcoming/{eventId}")
+    public ModelAndView upcomingEventDetails(@PathVariable Long eventId) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("upcoming_event_details");
+        Event event = eventService.getById(eventId);
+        List<Presentation> presentations = event.getPresentationsByStatus(PresentationStatus.CONFIRMED);
+        modelAndView.addObject("event", event);
+        modelAndView.addObject("presentations", presentations);
+        return modelAndView;
+    }
+
     @GetMapping("/event_management/{eventId}/suggested_by_speaker")
     public ModelAndView eventSuggestedBySpeakerPresentations(@PathVariable Long eventId) {
         ModelAndView modelAndView = new ModelAndView();

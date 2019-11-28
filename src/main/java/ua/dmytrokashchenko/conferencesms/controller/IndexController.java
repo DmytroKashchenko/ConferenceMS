@@ -12,6 +12,7 @@ import ua.dmytrokashchenko.conferencesms.service.UserService;
 
 import java.util.Map;
 
+// ######## REMOVE THIS ############
 @Controller
 public class IndexController {
     private UserService userService;

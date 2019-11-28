@@ -14,7 +14,4 @@ public interface PresentationService {
 
     List<Presentation> getPresentationsByAuthorAndStatus(User author, PresentationStatus status);
 
-/*    List<Presentation> getPresentationsSuggestedBySpeakerByEventId(Long eventId, Page page);
-
-    List<Presentation> getPresentationsSuggestedByModeratorByEventId(Long eventId, Page page);*/
 }
