@@ -7,7 +7,7 @@ import ua.dmytrokashchenko.conferencesms.domain.Address;
 public interface AddressService {
     Address addAddress(Address address);
 
-    void editAddress(Address address);
+    void saveAddress(Address address);
 
     Address getAddressById(Long id);
 

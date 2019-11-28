@@ -6,13 +6,11 @@ import ua.dmytrokashchenko.conferencesms.domain.Event;
 
 public interface EventService {
 
-    void add(Event event);
-//
-//    void update(Event event);
-//
+    void save(Event event);
+
     Event getById(Long id);
-//
-//    Page<Event> getEvents(Pageable pageable);
+
+    Event getEventByPresentationId(Long id);
 
     Page<Event> getUpcomingEvents(Pageable pageable);
 

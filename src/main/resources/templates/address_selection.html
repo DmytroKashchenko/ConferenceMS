@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Addresses list</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="col-10">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th><strong>Address ID</strong></th>
+                <th><strong>Address name</strong></th>
+                <th><strong>Country</strong></th>
+                <th><strong>City</strong></th>
+                <th><strong>Details</strong></th>
+                <th><strong>Choice</strong></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="address : ${addresses}">
+                <td><span th:text="${address.getId()}">Address ID</span></td>
+                <td><span th:text="${address.getName()}">Address name</span></td>
+                <td><span th:text="${address.getCountry()}">Country</span></td>
+                <td><span th:text="${address.getCity()}">City</span></td>
+                <td><span th:text="${address.getDetailedAddress()}">Details</span></td>
+                <td>
+                    <div>
+                        <form th:action="@{/address_selection}" name="address_selection" method="POST">
+                            <input name="addressId" type="hidden" required th:value="${address.getId()}">
+                            <input name="eventId" type="hidden" required th:value="${eventId}">
+                            <button type="submit" class="btn btn-dark">Choice</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+
+
+    </div>
+</div>
+</div>
+</body>
+</html>

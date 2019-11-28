@@ -15,6 +15,7 @@ public class UserMapper {
                 .firstName(userEntity.getFirstName())
                 .lastName(userEntity.getLastName())
                 .email(userEntity.getEmail())
+                .password(userEntity.getPassword())
                 .role(Role.valueOf(userEntity.getRoleEntity().name()))
                 .build();
     }

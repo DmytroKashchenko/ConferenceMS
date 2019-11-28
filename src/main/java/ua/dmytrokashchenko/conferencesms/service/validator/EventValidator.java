@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 import ua.dmytrokashchenko.conferencesms.domain.Event;
 import ua.dmytrokashchenko.conferencesms.domain.Presentation;
+import ua.dmytrokashchenko.conferencesms.domain.PresentationStatus;
 import ua.dmytrokashchenko.conferencesms.domain.Role;
 import ua.dmytrokashchenko.conferencesms.service.exceptions.EventValidatorException;
 
@@ -55,10 +56,10 @@ public class EventValidator implements Validator<Event> {
     }
 
     private void validatePresentationsTime(Event event) {
-        List<Presentation> presentations = event.getPresentations();
-        if (presentations == null || presentations.size() == 0) {
+        if (event.getPresentations() == null || event.getPresentations().size() == 0) {
             return;
         }
+        List<Presentation> presentations = event.getPresentationsByStatus(PresentationStatus.CONFIRMED);
         List<Presentation> sortedPresentations = presentations.stream()
                 .sorted(Comparator.comparing(Presentation::getStartDate))
                 .collect(Collectors.toList());

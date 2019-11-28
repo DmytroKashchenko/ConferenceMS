@@ -19,21 +19,6 @@ import java.util.function.BiFunction;
 public class EventServiceImpl implements EventService {
     private static final Logger LOGGER = Logger.getLogger(EventServiceImpl.class);
 
-//    private final EventRepository eventRepository;
-//    private final Validator<Event> eventValidator;
-//    private final EventMapper eventMapper;
-//    private final PresentationRepository presentationRepository;
-//    private final PresentationMapper presentationMapper;
-//
-//    public EventServiceImpl(EventRepository eventRepository, Validator<Event> eventValidator, EventMapper eventMapper,
-//                            PresentationRepository presentationRepository, PresentationMapper presentationMapper) {
-//        this.eventRepository = eventRepository;
-//        this.eventValidator = eventValidator;
-//        this.eventMapper = eventMapper;
-//        this.presentationRepository = presentationRepository;
-//        this.presentationMapper = presentationMapper;
-//    }
-
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
     private final Validator<Event> eventValidator;
@@ -45,56 +30,11 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public void add(Event event) {
+    public void save(Event event) {
         eventValidator.validate(event);
         eventRepository.save(eventMapper.mapEventToEntity(event));
     }
-//
-//    //TODO !!!
-//    @Override
-//    public void update(Event event) {
-//        if (event.getId() == null) {
-//            LOGGER.warn("Unsaved event cannot be updated");
-//            throw new EventServiceException("Unsaved event cannot be updated");
-//        }
-//        eventValidator.validate(event);
-//        List<Presentation> savedPresentations = getById(event.getId()).getPresentations();
-//        List<Presentation> presentationsForUpdate = event.getPresentations();
-//
-//        if (savedPresentations.size() > presentationsForUpdate.size()) {
-//            List<Presentation> difference = CollectionUtil.difference(savedPresentations, presentationsForUpdate);
-//            if (difference.size() != 1) {
-//                LOGGER.warn("More than one presentation cannot be deleted");
-//                throw new EventServiceException("More than one presentation cannot be deleted");
-//            }
-//            Presentation presentation = difference.get(0);
-//            presentationRepository.deleteById(presentation.getId());
-//        } else if (savedPresentations.size() < presentationsForUpdate.size()) {
-//            List<Presentation> difference = CollectionUtil.difference(presentationsForUpdate, savedPresentations);
-//            if (difference.size() != 1) {
-//                LOGGER.warn("More than one presentation cannot be added");
-//                throw new EventServiceException("More than one presentation cannot be added");
-//            }
-//            Presentation presentation = difference.get(0);
-//            if (presentation.getId() != null) {
-//                presentationRepository.save(presentationMapper.mapPresentationToEntity(presentation, event.getId()));
-//            } else {
-//                presentationRepository.save(presentationMapper.mapPresentationToEntity(presentation, event.getId()));
-//            }
-//        } else {
-//            List<Presentation> difference = CollectionUtil.difference(presentationsForUpdate, savedPresentations);
-//            if (difference.size() != 0) {
-//                if (difference.size() > 1) {
-//                    LOGGER.warn("More than one presentation cannot be updated");
-//                    throw new EventServiceException("More than one presentation cannot be updated");
-//                }
-//                Presentation presentation = difference.get(0);
-//                presentationRepository.save(presentationMapper.mapPresentationToEntity(presentation, event.getId()));
-//            }
-//        }
-//        eventRepository.save(eventMapper.mapEventToEntity(event));
-//    }
-//
+
     @Override
     public Event getById(Long id) {
         if (id == null || id < 0) {
@@ -107,25 +47,20 @@ public class EventServiceImpl implements EventService {
         }
         return eventMapper.mapEntityToEvent(eventRepository.findById(id).get());
     }
-//
-//    @Override
-//    public List<Presentation> getPresentationsByEventId(Long eventId, Page page) {
-//        return presentationRepository.findPresentationsByEventId(eventId, page)
-//                .stream()
-//                .map(presentationMapper::mapEntityToPresentation)
-//                .collect(Collectors.toList());
-//    }
-//
-//    @Override
-//    public List<Event> getEvents(Page page) {
-//        return getEvents(page, eventRepository::findRecords);
-//    }
-//
-//    @Override
-//    public List<Event> getPastEvents(Page page) {
-//        return getEvents(page, eventRepository::findPastEvents);
-//    }
-//
+
+    @Override
+    public Event getEventByPresentationId(Long id) {
+        if (id == null || id < 0) {
+            LOGGER.warn("Invalid id");
+            throw new EventServiceException("Invalid id");
+        }
+        if (!eventRepository.findEventEntityByPresentationEntityId(id).isPresent()) {
+            LOGGER.warn("No event with this presentation");
+            throw new EventServiceException("No event with this presentation");
+        }
+        return eventMapper.mapEntityToEvent(eventRepository.findEventEntityByPresentationEntityId(id).get());
+    }
+
     @Override
     public Page<Event> getUpcomingEvents(Pageable pageable) {
         return getEvents(pageable, eventRepository::findEventEntitiesByStartDateAfter);
@@ -145,20 +80,4 @@ public class EventServiceImpl implements EventService {
         return function.apply(now, pageable)
                 .map(eventMapper::mapEntityToEvent);
     }
-
-
-
-
-
-//
-//    private List<Event> getEvents(Page page, Function<Page, List<EventEntity>> function) {
-//        if (page == null) {
-//            LOGGER.warn("Invalid page");
-//            throw new EventServiceException("Invalid page");
-//        }
-//        return function.apply(page)
-//                .stream()
-//                .map(eventMapper::mapEntityToEvent)
-//                .collect(Collectors.toList());
-//    }
 }

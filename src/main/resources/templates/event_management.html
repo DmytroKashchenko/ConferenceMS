@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Conferences management</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+
+<div class="container">
+    <div class="col-12">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th><strong>Name</strong></th>
+                <th><strong>Details</strong></th>
+                <th><strong>Start</strong></th>
+                <th><strong>End</strong></th>
+                <th><strong>Buttons</strong></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="event : ${events}">
+                <td><span th:text="${event.getName()}">Event name</span></td>
+                <td><span th:text="${event.getEventDetails()}">Event details</span></td>
+                <td><span th:text="${event.getStartDate()}">Start</span></td>
+                <td><span th:text="${event.getFinishDate()}">End</span></td>
+                <td>
+                    <a th:href="@{/address_selection(eventId=${event.getId()})}"
+                    class="btn btn-secondary btn btn-block" role="button" aria-pressed="true">Choose a new address</a>
+                    <a th:href="@{/event_edit(eventId=${event.getId()})}"
+                       class="btn btn-secondary btn btn-block" role="button" aria-pressed="true">Edit conference</a>
+                    <a th:href="@{/presentation_add(eventId=${event.getId()})}"
+                       class="btn btn-secondary btn btn-block" role="button" aria-pressed="true">Add presentation</a>
+                    <a th:href="@{/event_management/{id}(id=${event.getId()})}"
+                       class="btn btn-secondary btn btn-block" role="button" aria-pressed="true">Show conference</a>
+                    <a th:href="@{/event_management/{id}/suggested_by_speaker(id=${event.getId()})}"
+                       class="btn btn-secondary btn btn-block" role="button" aria-pressed="true">Suggested presentations</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+</body>
+</html>

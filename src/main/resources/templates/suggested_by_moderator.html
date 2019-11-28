@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Conference details management</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="col-10">
+        <h3>Presentations suggested by moderator: </h3>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th><strong>Topic</strong></th>
+                <th><strong>Details</strong></th>
+                <th><strong>Start</strong></th>
+                <th><strong>Duration(min)</strong></th>
+                <th><strong>Confirm</strong></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="presentation : ${presentations}">
+                <td><span th:text="${presentation.getTopic()}">Presentation topic</span></td>
+                <td><span th:text="${presentation.getDescription()}">Presentation description</span></td>
+                <td><span
+                        th:text="${presentation.getStartDate().toLocalDate()} + ' ' + ${presentation.getStartDate().toLocalTime()}">Start</span>
+                </td>
+                <td><span th:text="${presentation.getDuration().toMinutes()}">Duration</span></td>
+                <td>
+                    <form th:action="@{/suggested_by_moderator}" name="address_selection" method="POST">
+                        <input name="presentationId" type="hidden" required th:value="${presentation.getId()}">
+                        <button type="submit" class="btn btn-dark">Confirm</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+</body>
+</html>

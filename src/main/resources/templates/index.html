@@ -9,44 +9,8 @@
 <body>
 
 <div class="container">
+
     <div class="row">
-        <div class="col-6">
-            <form th:action="@{/}" name="registration" method="POST">
-                <div class="form-group">
-                    <label for="firstName">First Name</label>
-                    <input name="firstName" type="text" autocomplete="off" class="form-control" id="firstName"
-                           placeholder="Enter your First Name" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="lastName">Last Name</label>
-                    <input name="lastName" type="text" autocomplete="off" class="form-control" id="lastName"
-                           placeholder="Enter your Last Name" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="email">Email address</label>
-                    <input name="email" type="email" autocomplete="off" class="form-control" id="email"
-                           placeholder="Enter email" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input name="password" type="password" autocomplete="new-password" class="form-control"
-                           id="password"
-                           placeholder="Password" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="password2">Confirm Password</label>
-                    <input name="password2" type="password" autocomplete="new-password" class="form-control"
-                           id="password2"
-                           placeholder="Confirm Password" required>
-                </div>
-
-                <button type="submit" class="btn btn-dark">Submit</button>
-            </form>
-        </div>
 
         <div class="col-6">
             <table class="table table-hover">
@@ -67,7 +31,6 @@
                 </tr>
                 </tbody>
             </table>
-
 
 
         </div>

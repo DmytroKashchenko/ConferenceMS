@@ -1,9 +1,10 @@
 package ua.dmytrokashchenko.conferencesms.service;
 
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import ua.dmytrokashchenko.conferencesms.domain.User;
 
-public interface UserService {
+public interface UserService extends UserDetailsService {
     User register(User user);
 
     User login(String email, String password);
@@ -17,6 +18,4 @@ public interface UserService {
     void deleteById(Long id);
 
     Page<User> getUsers(Integer pageNo, Integer pageSize, String sortBy);
-
-    void changeUserRole(User user);
 }

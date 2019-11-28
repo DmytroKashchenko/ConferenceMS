@@ -5,9 +5,7 @@ import lombok.Data;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Data
 @Builder
@@ -23,7 +21,10 @@ public class Presentation {
     private Map<User, Integer> ratings;
 
     public Map<User, Boolean> getRegistrations() {
-        return Objects.isNull(registrations) ? new HashMap<>() : registrations;
+        if (Objects.isNull(registrations)) {
+            registrations = new HashMap<>();
+        }
+        return registrations;
     }
 
     public Map<User, Integer> getRatings() {
@@ -31,7 +32,7 @@ public class Presentation {
     }
 
     public void addRegistration(User user) {
-        if (registrations == null) {
+        if (Objects.isNull(registrations)) {
             registrations = new HashMap<>();
         }
         registrations.put(user, false);
@@ -43,4 +44,5 @@ public class Presentation {
         }
         ratings.put(user, rating);
     }
+
 }

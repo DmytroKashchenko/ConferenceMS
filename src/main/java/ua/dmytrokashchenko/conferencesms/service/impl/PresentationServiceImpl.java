@@ -1,16 +1,36 @@
 package ua.dmytrokashchenko.conferencesms.service.impl;
 
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
+import ua.dmytrokashchenko.conferencesms.domain.Presentation;
+import ua.dmytrokashchenko.conferencesms.domain.PresentationStatus;
+import ua.dmytrokashchenko.conferencesms.domain.User;
+import ua.dmytrokashchenko.conferencesms.entity.PresentationEntity;
+import ua.dmytrokashchenko.conferencesms.entity.PresentationStatusEntity;
+import ua.dmytrokashchenko.conferencesms.entity.UserEntity;
+import ua.dmytrokashchenko.conferencesms.repository.PresentationRepository;
 import ua.dmytrokashchenko.conferencesms.service.PresentationService;
+import ua.dmytrokashchenko.conferencesms.service.exceptions.PresentationServiceException;
+import ua.dmytrokashchenko.conferencesms.service.mapper.PresentationMapper;
+import ua.dmytrokashchenko.conferencesms.service.mapper.UserMapper;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service
 public class PresentationServiceImpl implements PresentationService {
-    /*private static final Logger LOGGER = Logger.getLogger(PresentationServiceImpl.class);
+    private static final Logger LOGGER = Logger.getLogger(PresentationServiceImpl.class);
 
-    private final PresentationDao presentationDao;
+    private final PresentationRepository presentationRepository;
     private final PresentationMapper presentationMapper;
+    private final UserMapper userMapper;
 
-    public PresentationServiceImpl(PresentationDao presentationDao, PresentationMapper presentationMapper) {
-        this.presentationDao = presentationDao;
+    public PresentationServiceImpl(PresentationRepository presentationRepository, PresentationMapper presentationMapper, UserMapper userMapper) {
+        this.presentationRepository = presentationRepository;
         this.presentationMapper = presentationMapper;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -19,7 +39,7 @@ public class PresentationServiceImpl implements PresentationService {
             LOGGER.warn("Invalid id");
             throw new PresentationServiceException("Invalid id");
         }
-        Optional<PresentationEntity> optionalEntity = presentationDao.findById(id);
+        Optional<PresentationEntity> optionalEntity = presentationRepository.findById(id);
         if (!optionalEntity.isPresent()) {
             LOGGER.warn("No presentations with ID: " + id);
             throw new PresentationServiceException("No presentations with ID:" + id);
@@ -29,29 +49,15 @@ public class PresentationServiceImpl implements PresentationService {
     }
 
     @Override
-    public List<Presentation> getPresentationsSuggestedBySpeakerByEventId(Long eventId, Page page) {
-        int statusId = PresentationStatus.SUGGESTED_BY_SPEAKER.ordinal();
-        return getPresentationsByEventIdAndStatusId(eventId, page, statusId);
-    }
-
-    @Override
-    public List<Presentation> getPresentationsSuggestedByModeratorByEventId(Long eventId, Page page) {
-        int statusId = PresentationStatus.SUGGESTED_BY_SPEAKER.ordinal();
-        return getPresentationsByEventIdAndStatusId(eventId, page, statusId);
-    }
-
-    private List<Presentation> getPresentationsByEventIdAndStatusId(Long eventId, Page page, int statusId) {
-        if (eventId == null) {
-            LOGGER.warn("Invalid event id");
-            throw new PresentationServiceException("Invalid event id");
+    public List<Presentation> getPresentationsByAuthorAndStatus(User author, PresentationStatus status) {
+        if (author == null || status == null) {
+            return Collections.emptyList();
         }
-        if (page == null) {
-            LOGGER.warn("Invalid page");
-            throw new PresentationServiceException("Invalid page");
-        }
-        return presentationDao.findPresentationsByEventIdAndStatus(eventId, page, (long) statusId)
+        PresentationStatusEntity presentationStatusEntity = PresentationStatusEntity.valueOf(status.name());
+        UserEntity userEntity = userMapper.mapUserToEntity(author);
+        return presentationRepository.findPresentationEntityByAuthorAndStatus(userEntity, presentationStatusEntity)
                 .stream()
                 .map(presentationMapper::mapEntityToPresentation)
                 .collect(Collectors.toList());
-    }*/
+    }
 }

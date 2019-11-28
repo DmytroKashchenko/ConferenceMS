@@ -34,7 +34,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public void editAddress(Address address) {
+    public void saveAddress(Address address) {
         if (address == null) {
             LOGGER.warn("Empty address");
             throw new AddressServiceException("Empty address");

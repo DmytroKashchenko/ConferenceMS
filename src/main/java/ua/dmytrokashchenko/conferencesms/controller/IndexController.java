@@ -49,12 +49,4 @@ public class IndexController {
         return "index";
     }
 
-/*    @RequestMapping(value={"/"}, method = RequestMethod.GET)
-    public ModelAndView users(){
-        Page<User> users = userService.getUsers(0, 10, "id");
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("users", users);
-        modelAndView.setViewName("index");
-        return modelAndView;
-    }*/
 }

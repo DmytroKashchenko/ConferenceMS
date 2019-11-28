@@ -1,8 +1,15 @@
 package ua.dmytrokashchenko.conferencesms.domain;
 
-public enum Role {
+import org.springframework.security.core.GrantedAuthority;
+
+public enum Role implements GrantedAuthority {
     ADMIN,
     MODERATOR,
     SPEAKER,
-    USER
+    USER;
+
+    @Override
+    public String getAuthority() {
+        return name();
+    }
 }

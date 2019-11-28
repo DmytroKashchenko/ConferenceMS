@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ua.dmytrokashchenko.conferencesms.domain.User;
@@ -100,13 +102,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changeUserRole(User user) {
-        throw new UnsupportedOperationException();
-//        validator.validate(user);
-//        if (user == null) {
-//            LOGGER.warn("Invalid user");
-//            throw new UserServiceException("Invalid user");
-//        }
-//        userRepository.changeUserRole(userMapper.mapUserToEntity(user));
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userMapper.mapEntityToUser(userRepository.findByEmail(username).orElseThrow(UserServiceException::new));
     }
 }
