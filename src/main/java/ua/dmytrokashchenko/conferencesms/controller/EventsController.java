@@ -7,6 +7,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,6 +47,10 @@ public class EventsController {
     public ModelAndView upcomingEvents(
             @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
             @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+        //
+        Collection<SimpleGrantedAuthority> authorities = (Collection<SimpleGrantedAuthority>) SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+        System.out.println(authorities);
+        //
         Pageable pageable = getPageable(pageNum, pageSize);
         Page<Event> events = eventService.getUpcomingEvents(pageable);
         ModelAndView modelAndView = new ModelAndView();

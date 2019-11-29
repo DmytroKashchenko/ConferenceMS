@@ -43,7 +43,7 @@ public class UserController {
 
         userService.register(user);
 
-        return "redirect:login";
+        return "redirect:/login";
     }
 
     @PostMapping("/user/register_for_presentation")

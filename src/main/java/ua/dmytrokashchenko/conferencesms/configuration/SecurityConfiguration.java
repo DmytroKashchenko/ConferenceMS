@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import ua.dmytrokashchenko.conferencesms.domain.Role;
 import ua.dmytrokashchenko.conferencesms.service.UserService;
 
 @Configuration
@@ -24,6 +25,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/", "/registration", "/events/**").permitAll()
+                .antMatchers("/management/**").hasRole("MODERATOR")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
