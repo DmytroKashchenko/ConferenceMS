@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface EventRepository extends JpaRepository<EventEntity, Long> {
-    Page<EventEntity> findEventEntitiesByStartDateAfter(LocalDateTime startDate, Pageable pageable);
+    Page<EventEntity> findEventEntitiesByFinishDateAfter(LocalDateTime startDate, Pageable pageable);
 
     Page<EventEntity> findEventEntitiesByStartDateBefore(LocalDateTime startDate, Pageable pageable);
 

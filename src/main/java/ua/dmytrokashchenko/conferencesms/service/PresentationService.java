@@ -6,6 +6,7 @@ import ua.dmytrokashchenko.conferencesms.domain.PresentationStatus;
 import ua.dmytrokashchenko.conferencesms.domain.User;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public interface PresentationService {
@@ -14,4 +15,5 @@ public interface PresentationService {
 
     List<Presentation> getPresentationsByAuthorAndStatus(User author, PresentationStatus status);
 
+    Set<Long> getPresentationsIdsOnUserIsRegistered(Long userId);
 }

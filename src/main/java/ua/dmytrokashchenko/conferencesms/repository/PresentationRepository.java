@@ -15,9 +15,8 @@ public interface PresentationRepository extends JpaRepository<PresentationEntity
     List<PresentationEntity> findPresentationEntityByAuthorAndStatus(UserEntity author, PresentationStatusEntity status);
 
     @Query(
-            value = "SELECT presentation_presentation_id FROM presentation_registrations pr " +
-                    "WHERE pr.user_id = ? AND is_visitor = 1",
+            value = "SELECT presentation_presentation_id FROM presentation_registrations pr WHERE pr.user_id = ?",
             nativeQuery = true
     )
-    Set<Long> findPresentationsIdsOnUserIsRegistered(UserEntity userEntity);
+    Set<Long> findPresentationsIdsOnUserIsRegistered(Long userId);
 }

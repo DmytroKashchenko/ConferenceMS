@@ -13,7 +13,7 @@ import java.util.Collections;
 
 @Data
 @Builder
-public class User implements UserDetails {
+public class User implements UserDetails, Comparable<User> {
     private Long id;
 
     @NotEmpty(message = "*Please provide your name")
@@ -60,5 +60,16 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public int compareTo(User o) {
+        if (!this.firstName.equals(o.firstName)) {
+            return this.firstName.compareTo(o.firstName);
+        } else if (!this.lastName.equals(o.lastName)) {
+            return this.lastName.compareTo(o.lastName);
+        } else {
+            return this.email.compareTo(o.email);
+        }
     }
 }

@@ -17,6 +17,7 @@ import ua.dmytrokashchenko.conferencesms.service.mapper.UserMapper;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,5 +60,14 @@ public class PresentationServiceImpl implements PresentationService {
                 .stream()
                 .map(presentationMapper::mapEntityToPresentation)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Set<Long> getPresentationsIdsOnUserIsRegistered(Long userId) {
+        if (userId == null || userId <= 0) {
+            LOGGER.warn("Invalid id");
+            throw new PresentationServiceException("Invalid id");
+        }
+        return presentationRepository.findPresentationsIdsOnUserIsRegistered(userId);
     }
 }

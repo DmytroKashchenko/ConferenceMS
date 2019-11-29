@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User list</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th><strong>Name</strong></th>
+                    <th><strong>Surname</strong></th>
+                    <th><strong>Email</strong></th>
+                    <th><strong>Register visitor</strong></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user : ${users}">
+                    <td><span th:text="${user.firstName}">Name</span></td>
+                    <td><span th:text="${user.lastName}">Surname</span></td>
+                    <td><span th:text="${user.email}">Email</span></td>
+                    <td>
+                        <form th:action="@{/register_visitor}" name="address_selection" method="POST">
+                            <input name="presentationId" type="hidden" required th:value="${presentation.getId()}">
+                            <input name="eventId" type="hidden" required th:value="${eventId}">
+                            <input name="userId" type="hidden" required th:value="${user.getId()}">
+                            <button type="submit" class="btn btn-dark" th:disabled="${presentation.getRegistrations().get(user) == true}">
+                                Register visitor
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

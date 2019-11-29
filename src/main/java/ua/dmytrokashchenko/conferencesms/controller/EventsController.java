@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,11 +16,15 @@ import org.springframework.web.servlet.ModelAndView;
 import ua.dmytrokashchenko.conferencesms.domain.*;
 import ua.dmytrokashchenko.conferencesms.service.AddressService;
 import ua.dmytrokashchenko.conferencesms.service.EventService;
+import ua.dmytrokashchenko.conferencesms.service.PresentationService;
 import ua.dmytrokashchenko.conferencesms.service.UserService;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Controller
 public class EventsController {
@@ -28,12 +33,14 @@ public class EventsController {
     private final EventService eventService;
     private final AddressService addressService;
     private final UserService userService;
+    private final PresentationService presentationService;
 
     public EventsController(EventService eventService, AddressService addressService,
-                            UserService userService) {
+                            UserService userService, PresentationService presentationService) {
         this.eventService = eventService;
         this.addressService = addressService;
         this.userService = userService;
+        this.presentationService = presentationService;
     }
 
     @GetMapping("/events_upcoming")
@@ -126,8 +133,8 @@ public class EventsController {
                                    @RequestParam String presentationTopic,
                                    @RequestParam String presentationDescription,
                                    @RequestParam
-                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                          LocalDateTime presentationStart,
+                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                           LocalDateTime presentationStart,
                                    @RequestParam Integer presentationDuration,
                                    @RequestParam Long eventId,
                                    @RequestParam String presentationStatus) {
@@ -164,8 +171,8 @@ public class EventsController {
         modelAndView.setViewName("presentation_edit");
         Event event = eventService.getById(eventId);
         Presentation presentation = null;
-        for (Presentation presentationFromEvent:event.getPresentations()) {
-            if(presentationFromEvent.getId().equals(presentationId)) {
+        for (Presentation presentationFromEvent : event.getPresentations()) {
+            if (presentationFromEvent.getId().equals(presentationId)) {
                 presentation = presentationFromEvent;
             }
         }
@@ -188,8 +195,8 @@ public class EventsController {
         User author = userService.getByEmail(authorEmail);
         Event event = eventService.getById(eventId);
         Presentation presentation = null;
-        for (Presentation presentationFromEvent:event.getPresentations()) {
-            if(presentationFromEvent.getId().equals(presentationId)) {
+        for (Presentation presentationFromEvent : event.getPresentations()) {
+            if (presentationFromEvent.getId().equals(presentationId)) {
                 presentation = presentationFromEvent;
             }
         }
@@ -217,11 +224,14 @@ public class EventsController {
     }
 
     @GetMapping("/events/upcoming/{eventId}")
-    public ModelAndView upcomingEventDetails(@PathVariable Long eventId) {
+    public ModelAndView upcomingEventDetails(@AuthenticationPrincipal User user,
+                                             @PathVariable Long eventId) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("upcoming_event_details");
         Event event = eventService.getById(eventId);
         List<Presentation> presentations = event.getPresentationsByStatus(PresentationStatus.CONFIRMED);
+        Set<Long> presentationsIds = presentationService.getPresentationsIdsOnUserIsRegistered(user.getId());
+        modelAndView.addObject("presentationIds", presentationsIds);
         modelAndView.addObject("event", event);
         modelAndView.addObject("presentations", presentations);
         return modelAndView;
@@ -247,6 +257,41 @@ public class EventsController {
         eventService.save(event);
         return "redirect:/event_management/" + eventId + "/suggested_by_speaker";
     }
+
+    @GetMapping("/event_management/{eventId}/register_visitors/{presentationId}/all")
+    public ModelAndView registerVisitors(@PathVariable Long presentationId,
+                                         @PathVariable Long eventId) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("register_visitors_all");
+        Event event = eventService.getById(eventId);
+        Presentation presentation = event.getPresentationById(presentationId);
+        Set<User> users = new TreeSet<>(presentation.getRegistrations().keySet());
+        Map<User, Boolean> registrations = presentation.getRegistrations();
+        modelAndView.addObject("users", users);
+        modelAndView.addObject("registrations", registrations);
+        modelAndView.addObject("presentation", presentation);
+        modelAndView.addObject("eventId", eventId);
+        return modelAndView;
+    }
+
+    @PostMapping("/register_visitor")
+    public String registerVisitor(@RequestParam Long eventId,
+                                  @RequestParam Long presentationId,
+                                  @RequestParam Long userId) {
+        Event event = eventService.getById(eventId);
+        Presentation presentation = event.getPresentationById(presentationId);
+        User user = userService.getById(userId);
+        if (presentation.getRegistrations().get(user) == null) {
+            return "redirect:/"; //TODO need to add processing
+        }
+        if (presentation.getRegistrations().get(user)) {
+            return "redirect:/";  //TODO need to add processing
+        }
+        presentation.getRegistrations().put(user, true);
+        eventService.save(event);
+        return "redirect:/event_management/" + eventId + "/register_visitors/" + presentationId + "/all";
+    }
+
 
     private Pageable getPageable(Integer pageNum, Integer pageSize) {
         pageNum = Math.max(pageNum, 1);

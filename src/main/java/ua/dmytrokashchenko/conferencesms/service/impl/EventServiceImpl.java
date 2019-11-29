@@ -63,7 +63,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Page<Event> getUpcomingEvents(Pageable pageable) {
-        return getEvents(pageable, eventRepository::findEventEntitiesByStartDateAfter);
+        return getEvents(pageable, eventRepository::findEventEntitiesByFinishDateAfter);
     }
 
     @Override
