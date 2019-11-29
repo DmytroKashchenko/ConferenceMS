@@ -1,4 +1,4 @@
-package ua.dmytrokashchenko.conferencesms.controller;
+package ua.dmytrokashchenko.conferencesms.controller.unused;
 
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -13,7 +13,7 @@ import ua.dmytrokashchenko.conferencesms.service.UserService;
 import java.util.Map;
 
 // ######## REMOVE THIS ############
-@Controller
+//@Controller
 public class IndexController {
     private UserService userService;
 

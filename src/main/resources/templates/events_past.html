@@ -7,18 +7,17 @@
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
-
+<div th:insert="header :: header"></div>
 <div class="container">
-
-
         <div class="col-10">
             <table class="table table-hover">
                 <thead>
                 <tr>
                     <th><strong>Name</strong></th>
                     <th><strong>Details</strong></th>
-                    <th><strong>start</strong></th>
-                    <th><strong>end</strong></th>
+                    <th><strong>Start</strong></th>
+                    <th><strong>End</strong></th>
+                    <th><strong>Action</strong></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -27,12 +26,13 @@
                     <td><span th:text="${event.getEventDetails()}">Event details</span></td>
                     <td><span th:text="${event.getStartDate()}">Start</span></td>
                     <td><span th:text="${event.getFinishDate()}">End</span></td>
+                    <td>
+                        <a th:href="@{/events/past/{eventId}(eventId=${event.getId()})}"
+                           class="btn btn-secondary btn btn-block" role="button" aria-pressed="true">Show details</a>
+                    </td>
                 </tr>
                 </tbody>
             </table>
-
-
-
         </div>
     </div>
 </div>

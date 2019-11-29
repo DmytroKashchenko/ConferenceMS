@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
@@ -21,10 +22,7 @@ import ua.dmytrokashchenko.conferencesms.service.UserService;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 @Controller
 public class EventsController {
@@ -43,7 +41,7 @@ public class EventsController {
         this.presentationService = presentationService;
     }
 
-    @GetMapping("/events_upcoming")
+    @GetMapping("/")
     public ModelAndView upcomingEvents(
             @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
             @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
@@ -52,11 +50,10 @@ public class EventsController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("events_upcoming");
         modelAndView.addObject("events", events);
-
         return modelAndView;
     }
 
-    @GetMapping("/events_past")
+    @GetMapping("/events/past")
     public ModelAndView pastEvents(
             @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
             @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
@@ -91,7 +88,7 @@ public class EventsController {
                 .build();
         eventService.save(event);
 
-        return "redirect:/event_management";
+        return "redirect:/management";
     }
 
     @GetMapping("/event_add")
@@ -99,7 +96,7 @@ public class EventsController {
         return "event_add";
     }
 
-    @GetMapping("/event_management")
+    @GetMapping("/management")
     public ModelAndView eventManagement(
             @RequestParam(name = "pageNum", required = false, defaultValue = "1") Integer pageNum,
             @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
@@ -228,13 +225,32 @@ public class EventsController {
                                              @PathVariable Long eventId) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("upcoming_event_details");
+        Set<Long> presentationsIds;
+        if (user != null) {
+            presentationsIds = presentationService.getPresentationsIdsOnUserIsRegistered(user.getId());
+        } else {
+            presentationsIds = Collections.emptySet();
+        }
+        modelAndView.addObject("presentationIds", presentationsIds);
+        setEventDetails(user, eventId, modelAndView);
+        return modelAndView;
+    }
+
+    @GetMapping("/events/past/{eventId}")
+    public ModelAndView pastEventDetails(@AuthenticationPrincipal User user,
+                                         @PathVariable Long eventId) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("past_event_details");
+        setEventDetails(user, eventId, modelAndView);
+        modelAndView.addObject("user", user);
+        return modelAndView;
+    }
+
+    private void setEventDetails(User user, Long eventId, ModelAndView modelAndView) {
         Event event = eventService.getById(eventId);
         List<Presentation> presentations = event.getPresentationsByStatus(PresentationStatus.CONFIRMED);
-        Set<Long> presentationsIds = presentationService.getPresentationsIdsOnUserIsRegistered(user.getId());
-        modelAndView.addObject("presentationIds", presentationsIds);
         modelAndView.addObject("event", event);
         modelAndView.addObject("presentations", presentations);
-        return modelAndView;
     }
 
     @GetMapping("/event_management/{eventId}/suggested_by_speaker")

@@ -46,17 +46,17 @@ public class UserController {
         return "redirect:login";
     }
 
-    @PostMapping("/register_for_presentation")
+    @PostMapping("/user/register_for_presentation")
     public String registerForPresentation(@AuthenticationPrincipal User user,
                                           @RequestParam Long presentationId) {
         Event event = eventService.getEventByPresentationId(presentationId);
         Presentation presentation = event.getPresentationById(presentationId);
         if (presentation.getRegistrations().get(user) != null) {
-            return "redirect:events/upcoming/" + event.getId(); //TODO need to add processing?
+            return "redirect:/events/upcoming/" + event.getId(); //TODO need to add processing?
         }
         presentation.addRegistration(user);
         eventService.save(event);
-        return "redirect:events/upcoming/" + event.getId();
+        return "redirect:/events/upcoming/" + event.getId();
     }
 
     @PostMapping("/rate_presentation")
@@ -68,12 +68,9 @@ public class UserController {
         if (presentation.getRegistrations().get(user) == null || !presentation.getRegistrations().get(user)) {
             return "redirect:/"; // TODO need to add processing
         }
-        if (presentation.getRatings().get(user) != null) {
-            return "redirect:/"; // TODO need to add processing
-        }
         presentation.addUserRating(user, rating);
         eventService.save(event);
-        return "redirect:/";
+        return "redirect:/events/past/" + event.getId();
     }
 
 }
