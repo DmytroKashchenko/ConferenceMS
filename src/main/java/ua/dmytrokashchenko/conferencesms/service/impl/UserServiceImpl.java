@@ -10,13 +10,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import ua.dmytrokashchenko.conferencesms.domain.Role;
 import ua.dmytrokashchenko.conferencesms.domain.User;
+import ua.dmytrokashchenko.conferencesms.entity.RoleEntity;
 import ua.dmytrokashchenko.conferencesms.entity.UserEntity;
 import ua.dmytrokashchenko.conferencesms.repository.UserRepository;
 import ua.dmytrokashchenko.conferencesms.service.UserService;
 import ua.dmytrokashchenko.conferencesms.service.exceptions.UserServiceException;
 import ua.dmytrokashchenko.conferencesms.service.mapper.UserMapper;
 import ua.dmytrokashchenko.conferencesms.service.validator.Validator;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -37,14 +43,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User register(User user) {
+    public void register(User user) {
         validator.validate(user);
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             LOGGER.info("User with this email is already registered");
             throw new UserServiceException("User with this email is already registered");
         }
-        return userMapper.mapEntityToUser(userRepository.save(userMapper.mapUserToEntity(user)));
+        userRepository.save(userMapper.mapUserToEntity(user));
     }
 
     @Override
@@ -99,6 +105,23 @@ public class UserServiceImpl implements UserService {
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 
         return userRepository.findAll(paging).map(userMapper::mapEntityToUser);
+    }
+
+    @Override
+    public Page<User> getUsersByRole(Role role, Pageable pageable) {
+        return userRepository.findByRoleEntity(RoleEntity.valueOf(role.name()), pageable)
+                .map(userMapper::mapEntityToUser);
+    }
+
+    @Override
+    public Map<User, Double> getSpeakerRatings(Set<User> users) {
+        if (users == null) {
+            LOGGER.warn("Invalid users");
+            throw new UserServiceException("Invalid users");
+        }
+        Map<User, Double> ratings = new HashMap<>();
+        users.forEach((x) -> ratings.put(x, userRepository.findRatingByUserId(x.getId())));
+        return ratings;
     }
 
     @Override

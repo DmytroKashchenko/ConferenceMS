@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Edit presentation</title>
+    <title>Add presentation</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
@@ -11,43 +11,42 @@
 <div class="container">
     <div class="row">
         <div class="col-10">
-            <form th:action="@{/management/presentation_edit}" name="presentation_add" method="POST">
-
-                <div class="form-group">
-                    <label for="authorEmail">Speaker's email</label>
-                    <input name="authorEmail" type="email" autocomplete="off" class="form-control" id="authorEmail"
-                           placeholder="Enter speaker's email" required th:value="${presentation.getAuthor().getEmail()}">
-                </div>
-
+            <form th:action="@{/speaker/suggest_presentation}" name="presentation_add" method="POST">
                 <div class="form-group">
                     <label for="presentationTopic">Topic</label>
                     <input name="presentationTopic" type="text" autocomplete="off" class="form-control" id="presentationTopic"
-                           placeholder="Enter topic" required th:value="${presentation.getTopic()}">
+                           placeholder="Enter topic" required>
                 </div>
-
                 <div class="form-group">
                     <label for="presentationDescription">Description</label>
                     <textarea name="presentationDescription" class="form-control" id="presentationDescription" autocomplete="off"
-                              placeholder="Enter address details" required th:text="${presentation.getDescription()}"></textarea>
+                              placeholder="Enter address details" required></textarea>
                 </div>
 
                 <div class="form-group">
                     <label for="presentationStart">Start date and time</label>
                     <input name="presentationStart" type="datetime-local" autocomplete="off" class="form-control" id="presentationStart"
-                           placeholder="Enter presentation start date and time" required th:value="${presentation.getStartDate()}">
+                           placeholder="Enter presentation start date and time" required>
                 </div>
 
                 <div class="form-group">
                     <label for="presentationDuration">Duration in minutes</label>
                     <input name="presentationDuration" type="number" min="30" max="240" value="30" step="5"
                            autocomplete="off" class="form-control" id="presentationDuration"
-                           placeholder="Enter presentation duration" required th:value="${presentation.getDuration().toMinutes()}">
+                           placeholder="Enter presentation duration" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="presentationStatus">Select status</label>
+                    <select class="form-control" id="presentationStatus" name="presentationStatus">
+                        <option>Confirmed</option>
+                        <option>Suggested by moderator</option>
+                    </select>
                 </div>
 
                 <input type="hidden" name="eventId" th:value="${eventId}">
-                <input type="hidden" name="presentationId" th:value="${presentation.getId()}">
 
-                <button type="submit" class="btn btn-dark">Submit</button>
+                <button type="submit" class="btn btn-dark">Suggest</button>
             </form>
         </div>
 

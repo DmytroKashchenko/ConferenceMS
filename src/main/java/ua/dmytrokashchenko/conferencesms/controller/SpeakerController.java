@@ -1,31 +1,38 @@
 package ua.dmytrokashchenko.conferencesms.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import ua.dmytrokashchenko.conferencesms.domain.Event;
-import ua.dmytrokashchenko.conferencesms.domain.Presentation;
-import ua.dmytrokashchenko.conferencesms.domain.PresentationStatus;
-import ua.dmytrokashchenko.conferencesms.domain.User;
+import ua.dmytrokashchenko.conferencesms.domain.*;
 import ua.dmytrokashchenko.conferencesms.service.EventService;
 import ua.dmytrokashchenko.conferencesms.service.PresentationService;
+import ua.dmytrokashchenko.conferencesms.service.UserService;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
+@RequestMapping("/speaker")
 public class SpeakerController {
     private final PresentationService presentationService;
     private final EventService eventService;
+    private final UserService userService;
 
-    public SpeakerController(PresentationService presentationService, EventService eventService) {
+    public SpeakerController(PresentationService presentationService, EventService eventService,
+                             UserService userService) {
         this.presentationService = presentationService;
         this.eventService = eventService;
+        this.userService = userService;
     }
 
     @GetMapping("/suggested_by_moderator")
@@ -39,19 +46,20 @@ public class SpeakerController {
         return modelAndView;
     }
 
-    @PostMapping("/suggested_by_moderator")
+    @PostMapping("/confirm_presentation")
     public String confirmPresentation(@RequestParam Long presentationId) {
         Event event = eventService.getEventByPresentationId(presentationId);
         Presentation presentation = event.getPresentationById(presentationId);
         presentation.setStatus(PresentationStatus.CONFIRMED);
         eventService.save(event);
-        return "redirect:suggested_by_moderator";
+        return "redirect:/speaker/suggested_by_moderator";
     }
 
     @GetMapping("/suggest_presentation")
     public ModelAndView suggestPresentation(@RequestParam Long eventId) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("suggest_presentation");
+        modelAndView.addObject("eventId", eventId);
         return modelAndView;
     }
 
@@ -82,5 +90,15 @@ public class SpeakerController {
 
         return "redirect:/";
     }
+
+    public ModelAndView showSpeakerRating(
+            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("show_speaker_rating");
+        Page<User> speakers = userService.getUsersByRole(Role.SPEAKER, pageable);
+
+        return modelAndView;
+    }
+
 
 }

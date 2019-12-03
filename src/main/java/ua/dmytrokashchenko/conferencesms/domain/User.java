@@ -10,6 +10,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 
 @Data
 @Builder
@@ -39,7 +40,7 @@ public class User implements UserDetails, Comparable<User> {
 
     @Override
     public String getUsername() {
-        return email;
+        return this.email;
     }
 
     @Override
@@ -64,12 +65,9 @@ public class User implements UserDetails, Comparable<User> {
 
     @Override
     public int compareTo(User o) {
-        if (!this.firstName.equals(o.firstName)) {
-            return this.firstName.compareTo(o.firstName);
-        } else if (!this.lastName.equals(o.lastName)) {
-            return this.lastName.compareTo(o.lastName);
-        } else {
-            return this.email.compareTo(o.email);
-        }
+        return Comparator.comparing(User::getFirstName)
+                .thenComparing(User::getLastName)
+                .thenComparing(User::getEmail)
+                .compare(this, o);
     }
 }

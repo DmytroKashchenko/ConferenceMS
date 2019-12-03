@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
 <body>
 <div th:fragment="header">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="#"> Conferences MS </a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark" th:with="uri=${#httpServletRequest.requestURI}">
+        <a class="navbar-brand" href="#" th:text="#{project.name}"></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
 
@@ -20,20 +21,26 @@
                     <a class="nav-link" th:href="@{/events/past}">Past conferences </a>
                 </li>
 
-                <li class="nav-item">
+                <li class="nav-item" sec:authorize="hasAnyRole('ADMIN', 'MODERATOR')">
                     <a class="nav-link" th:href="@{/management}">Conferences management </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/login}">Sign in </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/registration}">Sign up </a>
+
+                <li class="nav-item" sec:authorize="hasAnyRole('ADMIN', 'SPEAKER')">
+                    <a class="nav-link" th:href="@{/speaker}">Speaker</a>
                 </li>
             </ul>
-
-            <form class="form-inline my-2 my-lg-0" th:action="@{/logout}" method="post">
+            <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn btn-outline-success my-2 my-sm-0 mx-2"
+               role="button" aria-pressed="true">Sign in</a>
+            <a sec:authorize="isAnonymous()" th:href="@{/registration}" class="btn btn-outline-success my-2 my-sm-0 mx-2"
+            role="button" aria-pressed="true">Sign up</a>
+            <form sec:authorize="isAuthenticated()" class="form-inline my-2 my-lg-0" th:action="@{/logout}"
+                  method="post">
                 <input class="btn btn-outline-success my-2 my-sm-0" type="submit" value="Sign Out"/>
             </form>
+            <a th:if="${#locale.language eq 'en'}" th:href="@{${uri}(lang=ua)}" class="btn btn-dark my-2 my-sm-0 mx-2"
+               role="button" aria-pressed="true">UA</a>
+            <a th:if="${#locale.language eq 'ua'}" th:href="@{${uri}(lang=en)}" class="btn btn-dark my-2 my-sm-0 mx-2"
+               role="button" aria-pressed="true">EN</a>
         </div>
     </nav>
 </div>

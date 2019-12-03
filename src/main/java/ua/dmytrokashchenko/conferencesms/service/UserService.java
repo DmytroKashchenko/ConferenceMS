@@ -1,11 +1,16 @@
 package ua.dmytrokashchenko.conferencesms.service;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import ua.dmytrokashchenko.conferencesms.domain.Role;
 import ua.dmytrokashchenko.conferencesms.domain.User;
 
+import java.util.Map;
+import java.util.Set;
+
 public interface UserService extends UserDetailsService {
-    User register(User user);
+    void register(User user);
 
     User login(String email, String password);
 
@@ -18,4 +23,8 @@ public interface UserService extends UserDetailsService {
     void deleteById(Long id);
 
     Page<User> getUsers(Integer pageNo, Integer pageSize, String sortBy);
+
+    Page<User> getUsersByRole(Role role, Pageable pageable);
+
+    Map<User, Double> getSpeakerRatings(Set<User> users);
 }

@@ -31,7 +31,7 @@
                 <td><span th:text="${address.getDetailedAddress()}">Details</span></td>
                 <td>
                     <div>
-                        <form th:action="@{/address_selection}" name="address_selection" method="POST">
+                        <form th:action="@{/management/address_selection}" name="address_selection" method="POST">
                             <input name="addressId" type="hidden" required th:value="${address.getId()}">
                             <input name="eventId" type="hidden" required th:value="${eventId}">
                             <button type="submit" class="btn btn-dark">Choice</button>
@@ -41,11 +41,8 @@
             </tr>
             </tbody>
         </table>
-
-
-
     </div>
-</div>
+    <div th:replace="pagination::pagination (pagination=${addresses})"></div>
 </div>
 </body>
 </html>

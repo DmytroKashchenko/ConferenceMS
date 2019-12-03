@@ -8,6 +8,20 @@
 </head>
 <body>
 <div th:insert="header :: header"></div>
+
+<div class="container">
+    <div class="shadow bg-white rounded">
+        <a th:href="@{/management/event_add}"
+           class="btn btn-secondary btn m-3 shadow-sm rounded" role="button" aria-pressed="true">Create a new
+            conference</a>
+        <a th:href="@{/management/address_add}"
+           class="btn btn-secondary btn m-3 shadow-sm rounded" role="button" aria-pressed="true">Create a new
+            address</a>
+        <a th:href="@{/management/address_management}"
+           class="btn btn-secondary btn m-3 shadow-sm rounded" role="button" aria-pressed="true">Show addresses</a>
+    </div>
+</div>
+
 <div class="container">
     <div class="col-12">
         <table class="table table-hover">
@@ -27,22 +41,24 @@
                 <td><span th:text="${event.getStartDate()}">Start</span></td>
                 <td><span th:text="${event.getFinishDate()}">End</span></td>
                 <td>
-                    <a th:href="@{/address_selection(eventId=${event.getId()})}"
-                    class="btn btn-secondary btn btn-block" role="button" aria-pressed="true">Choose a new address</a>
-                    <a th:href="@{/event_edit(eventId=${event.getId()})}"
+                    <a th:href="@{/management/{eventId}/address_selection(eventId=${event.getId()})}"
+                       class="btn btn-secondary btn btn-block" role="button" aria-pressed="true">Choose a new
+                        address</a>
+                    <a th:href="@{/management/event_edit/{eventId}(eventId=${event.getId()})}"
                        class="btn btn-secondary btn btn-block" role="button" aria-pressed="true">Edit conference</a>
-                    <a th:href="@{/presentation_add(eventId=${event.getId()})}"
+                    <a th:href="@{/management/{eventId}/presentation_add(eventId=${event.getId()})}"
                        class="btn btn-secondary btn btn-block" role="button" aria-pressed="true">Add presentation</a>
-                    <a th:href="@{/event_management/{id}(id=${event.getId()})}"
+                    <a th:href="@{/management/{id}(id=${event.getId()})}"
                        class="btn btn-secondary btn btn-block" role="button" aria-pressed="true">Show conference</a>
-                    <a th:href="@{/event_management/{id}/suggested_by_speaker(id=${event.getId()})}"
-                       class="btn btn-secondary btn btn-block" role="button" aria-pressed="true">Suggested presentations</a>
+                    <a th:href="@{/management/{id}/suggested_by_speaker(id=${event.getId()})}"
+                       class="btn btn-secondary btn btn-block" role="button" aria-pressed="true">Suggested
+                        presentations</a>
                 </td>
             </tr>
             </tbody>
         </table>
     </div>
-</div>
+    <div th:replace="pagination::pagination (pagination=${events})"></div>
 </div>
 </body>
 </html>

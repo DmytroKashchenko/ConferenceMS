@@ -10,10 +10,13 @@ import java.util.Map;
 @NoArgsConstructor
 @Entity*/
 public class SpeakerRatingEntity {
+    private UserEntity userEntity;
+    private Integer rating;
 
-    private UserEntity user; // якому спікеру належать оцінки
+
+/*    private UserEntity user; // якому спікеру належать оцінки
 
     private PresentationEntity presentation; // яку презентацію оцінюють
 
-    private Map<UserEntity, Integer> ratings; // які відвідувачі які оцінки поставили
+    private Map<UserEntity, Integer> ratings; // які відвідувачі які оцінки поставили*/
 }

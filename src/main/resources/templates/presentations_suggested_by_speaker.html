@@ -28,7 +28,7 @@
                 <td><span th:text="${presentation.getDuration().toMinutes()}">Duration</span></td>
                 <td>
                     <div>
-                        <form th:action="@{/event_management/{eventId}/suggested_by_speaker(eventId = ${eventId})}" name="confirm" method="POST">
+                        <form th:action="@{/management/{eventId}/suggested_by_speaker(eventId = ${eventId})}" name="confirm" method="POST">
                             <input name="presentationId" type="hidden" required th:value="${presentation.getId()}">
                             <button type="submit" class="btn btn-dark">Confirm</button>
                         </form>
