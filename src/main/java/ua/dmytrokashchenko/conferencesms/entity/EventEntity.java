@@ -35,7 +35,7 @@ public class EventEntity {
     @JoinColumn(name = "address_id", nullable = false)
     private AddressEntity addressEntity;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "event_presentations",
             joinColumns = {@JoinColumn(name = "event_id", referencedColumnName = "event_id")},
             inverseJoinColumns = {@JoinColumn(name = "presentation_id",

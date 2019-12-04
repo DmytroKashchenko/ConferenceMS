@@ -304,4 +304,16 @@ public class ManagementController {
         eventService.save(event);
         return String.format("redirect:/management/%d/register_visitors/%d/all", eventId, presentationId);
     }
+
+    @GetMapping("/speaker_rating")
+    public ModelAndView showSpeakerRating(
+            @PageableDefault(sort = "firstName", direction = Sort.Direction.ASC) Pageable pageable) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("speaker_rating");
+        Page<User> speakers = userService.getUsersByRole(Role.SPEAKER, pageable);
+        Map<User, Double> speakerRatings = userService.getSpeakerRatings(speakers.toSet());
+        modelAndView.addObject("speakers", speakers);
+        modelAndView.addObject("speakerRatings", speakerRatings);
+        return modelAndView;
+    }
 }

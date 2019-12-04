@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Speaker ratings</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+<div th:insert="header :: header"></div>
+<div class="container">
+    <div class="col-6 mx-auto">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th><strong>Name</strong></th>
+                <th><strong>Surname</strong></th>
+                <th><strong>Email</strong></th>
+                <th><strong>Rating</strong></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="speaker : ${speakers}">
+                <td><span th:text="${speaker.getFirstName()}">Name</span></td>
+                <td><span th:text="${speaker.getLastName()}">Surname</span></td>
+                <td><span th:text="${speaker.getEmail()}">Email</span></td>
+                <td><span th:text="${speakerRatings.get(speaker) == null? '-' : speakerRatings.get(speaker)}">Rating</span></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:replace="pagination::pagination (pagination=${speakers})"></div>
+</div>
+</body>
+</html>

@@ -20,19 +20,17 @@ import ua.dmytrokashchenko.conferencesms.service.UserService;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/speaker")
 public class SpeakerController {
     private final PresentationService presentationService;
     private final EventService eventService;
-    private final UserService userService;
 
-    public SpeakerController(PresentationService presentationService, EventService eventService,
-                             UserService userService) {
+    public SpeakerController(PresentationService presentationService, EventService eventService) {
         this.presentationService = presentationService;
         this.eventService = eventService;
-        this.userService = userService;
     }
 
     @GetMapping("/suggested_by_moderator")
@@ -91,14 +89,7 @@ public class SpeakerController {
         return "redirect:/";
     }
 
-    public ModelAndView showSpeakerRating(
-            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("show_speaker_rating");
-        Page<User> speakers = userService.getUsersByRole(Role.SPEAKER, pageable);
 
-        return modelAndView;
-    }
 
 
 }

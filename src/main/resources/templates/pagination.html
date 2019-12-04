@@ -17,6 +17,23 @@
                 </li>
             </ul>
         </nav>
+        <nav aria-label="Page size">
+            <ul class="pagination justify-content-center">
+                <!--/*@thymesVar id="pagination" type="org.springframework.data.domain.Page"*/-->
+                <li class="page-item">
+                    <a class="page-link"
+                       th:href="@{${uri}(page = ${pagination.getNumber()}, size = 10)}">10</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link"
+                       th:href="@{${uri}(page = ${pagination.getNumber()}, size = 25)}">25</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link"
+                       th:href="@{${uri}(page = ${pagination.getNumber()}, size = 50)}">50</a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </div>
 </body>

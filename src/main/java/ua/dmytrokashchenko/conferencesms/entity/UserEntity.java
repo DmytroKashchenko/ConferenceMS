@@ -2,11 +2,8 @@ package ua.dmytrokashchenko.conferencesms.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
 
 @NoArgsConstructor
 @Data
