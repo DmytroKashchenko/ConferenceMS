@@ -29,6 +29,12 @@ public class Presentation {
         return registrations;
     }
 
+    public long getNumberOfVisitors() {
+        return registrations.values().stream()
+                .filter((x) -> x)
+                .count();
+    }
+
     public Map<User, Integer> getRatings() {
         if (Objects.isNull(ratings)) {
             ratings = new HashMap<>();

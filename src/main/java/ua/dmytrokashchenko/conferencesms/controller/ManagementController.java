@@ -10,16 +10,13 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import ua.dmytrokashchenko.conferencesms.domain.*;
-import ua.dmytrokashchenko.conferencesms.service.AddressService;
-import ua.dmytrokashchenko.conferencesms.service.EventService;
-import ua.dmytrokashchenko.conferencesms.service.UserService;
+import ua.dmytrokashchenko.conferencesms.service.*;
+import ua.dmytrokashchenko.conferencesms.service.util.BonusUtil;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/management")
@@ -28,11 +25,17 @@ public class ManagementController {
     private final AddressService addressService;
     private final EventService eventService;
     private final UserService userService;
+    private final BonusService bonusService;
+    private final EmailSenderService emailSenderService;
 
-    public ManagementController(AddressService addressService, EventService eventService, UserService userService) {
+    public ManagementController(AddressService addressService, EventService eventService,
+                                UserService userService, BonusService bonusService,
+                                EmailSenderService emailSenderService) {
         this.addressService = addressService;
         this.eventService = eventService;
         this.userService = userService;
+        this.bonusService = bonusService;
+        this.emailSenderService = emailSenderService;
     }
 
     @GetMapping("/address_add")
@@ -312,8 +315,44 @@ public class ManagementController {
         modelAndView.setViewName("speaker_rating");
         Page<User> speakers = userService.getUsersByRole(Role.SPEAKER, pageable);
         Map<User, Double> speakerRatings = userService.getSpeakerRatings(speakers.toSet());
+        Set<Bonus> bonuses = bonusService.getRecords();
+        Map<User, Double> coefficients = BonusUtil.getCoefficients(bonuses, speakerRatings);
         modelAndView.addObject("speakers", speakers);
         modelAndView.addObject("speakerRatings", speakerRatings);
+        modelAndView.addObject("coefficients", coefficients);
         return modelAndView;
+    }
+
+    @GetMapping("/bonuses")
+    public ModelAndView showBonusTable() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("bonuses");
+        Set<Bonus> bonuses = bonusService.getRecords();
+        modelAndView.addObject("bonuses", bonuses);
+        return modelAndView;
+    }
+
+    @GetMapping("/send_email/{eventId}")
+    public ModelAndView sendMessages(@PathVariable Long eventId) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("eventId", eventId);
+        modelAndView.setViewName("send_emails");
+        return modelAndView;
+    }
+
+    @PostMapping("/send_email")
+    public String sendMessages(@RequestParam Long eventId,
+                               @RequestParam String subject,
+                               @RequestParam String message) {
+        Event event = eventService.getById(eventId);
+        Set<String> emails = event.getPresentations().stream()
+                .filter((x) -> x.getStatus().equals(PresentationStatus.CONFIRMED))
+                .map(Presentation::getRegistrations)
+                .map(Map::keySet)
+                .flatMap(Collection::stream)
+                .map(User::getEmail)
+                .collect(Collectors.toSet());
+        emailSenderService.sendMessages(emails, subject, message);
+        return "redirect:/management";
     }
 }

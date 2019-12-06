@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>User list</title>
@@ -29,6 +29,10 @@
                 <td>
                     <a th:href="@{/events/upcoming/{eventId}(eventId=${event.getId()})}"
                        class="btn btn-secondary btn btn-block" role="button" aria-pressed="true">Show details</a>
+
+                    <a th:href="@{/speaker/suggest_presentation(eventId=${event.getId()})}"
+                       sec:authorize="hasAnyRole('ADMIN', 'SPEAKER')"
+                       class="btn btn-secondary btn btn-block" role="button" aria-pressed="true">Suggest presentation</a>
                 </td>
             </tr>
             </tbody>

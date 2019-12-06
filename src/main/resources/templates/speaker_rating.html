@@ -17,6 +17,7 @@
                 <th><strong>Surname</strong></th>
                 <th><strong>Email</strong></th>
                 <th><strong>Rating</strong></th>
+                <th><strong>Bonus coefficient</strong></th>
             </tr>
             </thead>
             <tbody>
@@ -25,6 +26,7 @@
                 <td><span th:text="${speaker.getLastName()}">Surname</span></td>
                 <td><span th:text="${speaker.getEmail()}">Email</span></td>
                 <td><span th:text="${speakerRatings.get(speaker) == null? '-' : speakerRatings.get(speaker)}">Rating</span></td>
+                <td><span th:text="${coefficients.get(speaker) + '%'}">Bonus coefficient</span></td>
             </tr>
             </tbody>
         </table>

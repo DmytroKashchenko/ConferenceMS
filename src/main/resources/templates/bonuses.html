@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bonuses</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+<div th:insert="header :: header"></div>
+<div class="container">
+    <div class="col-5 mx-auto">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th><strong>Rating</strong></th>
+                <th><strong>Coefficient</strong></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="bonus : ${bonuses}">
+                <td><span th:text="${bonus.getRating()}">Rating</span></td>
+                <td><span th:text="${bonus.getCoefficient()}">Coefficient</span></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

@@ -3,9 +3,7 @@ package ua.dmytrokashchenko.conferencesms.service.impl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -83,7 +81,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void update(User user) {
-        validator.validate(user);
+        if (user == null) {
+            LOGGER.warn("Invalid user");
+            throw new UserServiceException("Invalid user");
+        }
         userRepository.save(userMapper.mapUserToEntity(user));
     }
 
@@ -97,14 +98,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<User> getUsers(Integer pageNo, Integer pageSize, String sortBy/*validation*/) {
-        if (pageNo == null || pageSize == null) {
+    public Page<User> getUsers(Pageable pageable) {
+        if (pageable == null) {
             LOGGER.warn("Invalid page");
             throw new UserServiceException("Invalid page");
         }
-        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-
-        return userRepository.findAll(paging).map(userMapper::mapEntityToUser);
+        return userRepository.findAll(pageable).map(userMapper::mapEntityToUser);
     }
 
     @Override
@@ -126,6 +125,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userMapper.mapEntityToUser(userRepository.findByEmail(username).orElseThrow(UserServiceException::new));
+        return userMapper.mapEntityToUser(userRepository.findByEmail(username)
+                .orElseThrow(UserServiceException::new));
     }
 }

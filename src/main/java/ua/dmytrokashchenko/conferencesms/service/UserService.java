@@ -22,7 +22,7 @@ public interface UserService extends UserDetailsService {
 
     void deleteById(Long id);
 
-    Page<User> getUsers(Integer pageNo, Integer pageSize, String sortBy);
+    Page<User> getUsers(Pageable pageable);
 
     Page<User> getUsersByRole(Role role, Pageable pageable);
 

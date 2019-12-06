@@ -1,9 +1,5 @@
 package ua.dmytrokashchenko.conferencesms.controller;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -12,15 +8,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import ua.dmytrokashchenko.conferencesms.domain.*;
+import ua.dmytrokashchenko.conferencesms.domain.Event;
+import ua.dmytrokashchenko.conferencesms.domain.Presentation;
+import ua.dmytrokashchenko.conferencesms.domain.PresentationStatus;
+import ua.dmytrokashchenko.conferencesms.domain.User;
 import ua.dmytrokashchenko.conferencesms.service.EventService;
 import ua.dmytrokashchenko.conferencesms.service.PresentationService;
-import ua.dmytrokashchenko.conferencesms.service.UserService;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/speaker")
@@ -88,8 +85,4 @@ public class SpeakerController {
 
         return "redirect:/";
     }
-
-
-
-
 }

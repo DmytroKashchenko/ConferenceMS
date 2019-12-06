@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Users management</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+<div th:insert="header :: header"></div>
+<div class="container">
+    <div class="col-12 mx-auto">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th><strong>Name</strong></th>
+                <th><strong>Surname</strong></th>
+                <th><strong>Email</strong></th>
+                <th><strong>Role</strong></th>
+                <th><strong>Action</strong></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td><span th:text="${user.getFirstName()}">Name</span></td>
+                <td><span th:text="${user.getLastName()}">Surname</span></td>
+                <td><span th:text="${user.getEmail()}">Email</span></td>
+                <td th:switch="${user.getRole().name()}">
+                    <span th:case="'ADMIN'" th:text="#{role.admin}">Role</span>
+                    <span th:case="'MODERATOR'" th:text="#{role.moderator}">Role</span>
+                    <span th:case="'SPEAKER'" th:text="#{role.speaker}">Role</span>
+                    <span th:case="'USER'" th:text="#{role.user}">Role</span>
+                </td>
+                <td>
+                    <form class="form-inline" method="post" th:action="@{/admin/set_role}">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="roleName" id="inlineRadio1" value="ADMIN" required>
+                            <label class="form-check-label" for="inlineRadio1" th:text="#{role.admin}">ADMIN</label>
+                        </div>
+
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="roleName" id="inlineRadio2" value="MODERATOR" required>
+                            <label class="form-check-label" for="inlineRadio2" th:text="#{role.moderator}">MODERATOR</label>
+                        </div>
+
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="roleName" id="inlineRadio3" value="SPEAKER" required>
+                            <label class="form-check-label" for="inlineRadio3" th:text="#{role.speaker}">SPEAKER</label>
+                        </div>
+
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="roleName" id="inlineRadio4" value="USER" required>
+                            <label class="form-check-label" for="inlineRadio3" th:text="#{role.user}">USER</label>
+                        </div>
+                        <input type="hidden" name="userId" th:value="${user.getId()}" required>
+                        <button type="submit" class="btn btn-dark mb-2">Save</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:replace="pagination::pagination (pagination=${users})"></div>
+</div>
+</body>
+</html>

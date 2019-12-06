@@ -97,6 +97,7 @@
                 <th><strong>Details</strong></th>
                 <th><strong>Start</strong></th>
                 <th><strong>Duration(min)</strong></th>
+                <th><strong>Registrations/Visitors</strong></th>
                 <th><strong>Action</strong></th>
             </tr>
             </thead>
@@ -108,6 +109,9 @@
                         th:text="${presentation.getStartDate().toLocalDate()} + ' ' + ${presentation.getStartDate().toLocalTime()}">Start</span>
                 </td>
                 <td><span th:text="${presentation.getDuration().toMinutes()}">Duration</span></td>
+
+                <td><span th:text="${presentation.getRegistrations().size() + ' / '
+                + presentation.getNumberOfVisitors()}">Registrations/Visitors</span></td>
                 <td>
                     <div>
                         <form th:action="@{/rate_presentation}" name="rate" method="POST">
