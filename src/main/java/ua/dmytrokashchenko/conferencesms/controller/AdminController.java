@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import ua.dmytrokashchenko.conferencesms.domain.Bonus;
+import ua.dmytrokashchenko.conferencesms.domain.Message;
 import ua.dmytrokashchenko.conferencesms.domain.Role;
 import ua.dmytrokashchenko.conferencesms.domain.User;
 import ua.dmytrokashchenko.conferencesms.service.BonusService;
+import ua.dmytrokashchenko.conferencesms.service.EmailSenderService;
 import ua.dmytrokashchenko.conferencesms.service.UserService;
 
 import java.util.Set;
@@ -23,10 +25,13 @@ import java.util.Set;
 public class AdminController {
     private final UserService userService;
     private final BonusService bonusService;
+    private final EmailSenderService emailSenderService;
 
-    public AdminController(UserService userService, BonusService bonusService) {
+    public AdminController(UserService userService, BonusService bonusService,
+                           EmailSenderService emailSenderService) {
         this.userService = userService;
         this.bonusService = bonusService;
+        this.emailSenderService = emailSenderService;
     }
 
     @GetMapping("/users")
@@ -71,5 +76,15 @@ public class AdminController {
         bonus.setCoefficient(coefficient);
         bonusService.saveRecord(bonus);
         return "redirect:/admin/bonuses";
+    }
+
+    @GetMapping("/sent_messages")
+    public ModelAndView showSentMessages(
+            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<Message> messages = emailSenderService.getMessages(pageable);
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("sent_messages");
+        modelAndView.addObject("messages", messages);
+        return modelAndView;
     }
 }

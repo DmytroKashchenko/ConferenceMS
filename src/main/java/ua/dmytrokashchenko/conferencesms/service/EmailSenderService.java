@@ -1,8 +1,11 @@
 package ua.dmytrokashchenko.conferencesms.service;
 
-import java.util.Set;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import ua.dmytrokashchenko.conferencesms.domain.Message;
 
 public interface EmailSenderService {
-    void sendMessage(String to, String subject, String message);
-    void sendMessages(Set<String> emails, String subject, String text);
+    void sendMessages(Message message);
+
+    Page<Message> getMessages(Pageable pageable);
 }

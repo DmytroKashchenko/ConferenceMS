@@ -29,6 +29,10 @@
                     <a class="nav-link" th:href="@{/admin/bonuses}">Bonuses</a>
                 </li>
 
+                <li class="nav-item" sec:authorize="hasAnyRole('ADMIN')">
+                    <a class="nav-link" th:href="@{/admin/sent_messages}">Sent messages</a>
+                </li>
+
                 <li class="nav-item" sec:authorize="hasAnyRole('ADMIN', 'MODERATOR')">
                     <a class="nav-link" th:href="@{/management}">Conferences management </a>
                 </li>

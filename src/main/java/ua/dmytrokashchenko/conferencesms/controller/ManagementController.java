@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
@@ -341,18 +342,24 @@ public class ManagementController {
     }
 
     @PostMapping("/send_email")
-    public String sendMessages(@RequestParam Long eventId,
+    public String sendMessages(@AuthenticationPrincipal User user,
+                               @RequestParam Long eventId,
                                @RequestParam String subject,
                                @RequestParam String message) {
         Event event = eventService.getById(eventId);
-        Set<String> emails = event.getPresentations().stream()
+        Set<User> users = event.getPresentations().stream()
                 .filter((x) -> x.getStatus().equals(PresentationStatus.CONFIRMED))
                 .map(Presentation::getRegistrations)
                 .map(Map::keySet)
                 .flatMap(Collection::stream)
-                .map(User::getEmail)
                 .collect(Collectors.toSet());
-        emailSenderService.sendMessages(emails, subject, message);
+        Message msg = Message.builder()
+                .author(user)
+                .recipients(users)
+                .subject(subject)
+                .text(message)
+                .build();
+        emailSenderService.sendMessages(msg);
         return "redirect:/management";
     }
 }

@@ -1,22 +1,31 @@
 package ua.dmytrokashchenko.conferencesms.service.impl;
 
+import lombok.extern.log4j.Log4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import ua.dmytrokashchenko.conferencesms.domain.Message;
+import ua.dmytrokashchenko.conferencesms.repository.MessageRepository;
 import ua.dmytrokashchenko.conferencesms.service.EmailSenderService;
+import ua.dmytrokashchenko.conferencesms.service.mapper.MessageMapper;
 
-import java.util.Set;
-
-@Component
+@Log4j
+@Service
 public class EmailSenderServiceImpl implements EmailSenderService {
     private final JavaMailSender javaMailSender;
+    private final MessageRepository messageRepository;
+    private final MessageMapper messageMapper;
 
-    public EmailSenderServiceImpl(JavaMailSender javaMailSender) {
+    public EmailSenderServiceImpl(JavaMailSender javaMailSender, MessageRepository messageRepository,
+                                  MessageMapper messageMapper) {
         this.javaMailSender = javaMailSender;
+        this.messageRepository = messageRepository;
+        this.messageMapper = messageMapper;
     }
 
-    @Override
-    public void sendMessage(String to, String subject, String text) {
+    private void sendMessage(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject(subject);
@@ -25,7 +34,21 @@ public class EmailSenderServiceImpl implements EmailSenderService {
     }
 
     @Override
-    public void sendMessages(Set<String> emails, String subject, String text) {
-        emails.forEach((x) -> this.sendMessage(x, subject, text));
+    public void sendMessages(Message message) {
+        message.getRecipients()
+                .forEach((user) -> this.sendMessage(user.getEmail(), message.getSubject(), message.getText()));
+        log.info("Message successfully sent.\nAuthor:" + message.getAuthor().getFirstName() + " " +
+                message.getAuthor().getLastName() +
+                "\nSubject: " + message.getSubject() + "\nText: " + message.getText());
+        messageRepository.save(messageMapper.mapMessageToEntity(message));
+    }
+
+    @Override
+    public Page<Message> getMessages(Pageable pageable) {
+        if (pageable == null) {
+            log.warn("Invalid pageable object");
+            throw new IllegalArgumentException("Invalid pageable object");
+        }
+        return messageRepository.findAll(pageable).map(messageMapper::mapEntityToMessage);
     }
 }
