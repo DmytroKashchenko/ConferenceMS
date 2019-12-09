@@ -15,10 +15,10 @@ public class UserEntity {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(name = "first_name")
+    @Column(name = "first_name", length = 50)
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(name = "last_name", length = 50)
     private String lastName;
 
     @Column(name = "email", unique = true)
@@ -27,7 +27,7 @@ public class UserEntity {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "role")
+    @Column(name = "role", length = 10)
     @Enumerated(EnumType.STRING)
     private RoleEntity roleEntity;
 

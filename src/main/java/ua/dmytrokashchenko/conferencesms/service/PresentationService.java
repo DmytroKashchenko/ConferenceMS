@@ -16,4 +16,10 @@ public interface PresentationService {
     List<Presentation> getPresentationsByAuthorAndStatus(User author, PresentationStatus status);
 
     Set<Long> getPresentationsIdsOnUserIsRegistered(Long userId);
+
+    void registerForPresentation(Long presentationId, User user);
+
+    void ratePresentation(User user, Integer rating, Long presentationId);
+
+    void registerVisitor(Long presentationId, Long userId);
 }

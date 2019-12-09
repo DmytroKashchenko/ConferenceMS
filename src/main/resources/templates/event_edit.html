@@ -10,45 +10,86 @@
 <div th:insert="header :: header"></div>
 <div class="container">
     <div class="row">
-        <div class="col-10">
+        <div class="col-12">
             <form th:action="@{/management/event_edit}" name="event_add" method="POST">
-                <div class="form-group">
-                    <label for="addressId">Address id</label>
-                    <input name="addressId" type="number" autocomplete="off" class="form-control" id="addressId"
-                           placeholder="Enter address id" required th:value="${event.getAddress().getId()}">
-                </div>
+
+                <input type="hidden" name="addressId" required th:value="${event.getAddress().getId()}">
 
                 <div class="form-group">
-                    <label for="eventName">Conference name</label>
+                    <label for="eventName" th:text="#{event.name}">Conference name</label>
                     <input name="eventName" type="text" autocomplete="off" class="form-control" id="eventName"
-                           placeholder="Enter conference name" required th:value="${event.getName()}">
+                           maxlength="255" required th:value="${event.getName()}">
                 </div>
 
                 <div class="form-group">
-                    <label for="eventDetails">Conference details</label>
+                    <label for="eventDetails" th:text="#{event.details}">Conference details</label>
                     <input name="eventDetails" type="text" autocomplete="off" class="form-control" id="eventDetails"
-                           placeholder="Enter conference details" required th:value="${event.getEventDetails()}">
+                           placeholder="Enter conference details" maxlength="2000" required
+                           th:value="${event.getEventDetails()}">
                 </div>
 
                 <div class="form-group">
-                    <label for="eventStart">Conference start date and time</label>
-                    <input name="eventStart" type="datetime-local" autocomplete="off" class="form-control" id="eventStart"
-                           placeholder="Enter conference start date and time" required th:value="${event.getStartDate()}">
+                    <label for="eventStartDate" th:text="#{event.start.date}">Conference start date</label>
+                    <input name="eventStartDate" type="date" autocomplete="off" class="form-control"
+                           id="eventStartDate"
+                           placeholder="Enter conference start date and time" required
+                           th:value="${event.getStartDate().toLocalDate()}">
                 </div>
 
                 <div class="form-group">
-                    <label for="eventFinish">Conference finish date and time</label>
-                    <input name="eventFinish" type="datetime-local" autocomplete="off" class="form-control" id="eventFinish"
-                           placeholder="Enter conference finish date and time" required th:value="${event.getFinishDate()}">
+                    <label for="eventStartTime" th:text="#{event.start.time}">Conference start time</label>
+                    <input name="eventStartTime" type="time" autocomplete="off" class="form-control"
+                           id="eventStartTime"
+                           placeholder="Enter conference start date and time" required
+                           th:value="${event.getStartDate().toLocalTime()}">
+                </div>
+
+                <div class="form-group">
+                    <label for="eventFinishDate" th:text="#{event.end.date}">Conference finish date</label>
+                    <input name="eventFinishDate" type="date" autocomplete="off" class="form-control"
+                           id="eventFinishDate"
+                           placeholder="Enter conference finish" required
+                           th:value="${event.getFinishDate().toLocalDate()}">
+                </div>
+
+                <div class="form-group">
+                    <label for="eventFinishTime" th:text="#{event.end.time}">Conference finish time</label>
+                    <input name="eventFinishTime" type="time" autocomplete="off" class="form-control"
+                           id="eventFinishTime"
+                           placeholder="Enter conference finish time" required
+                           th:value="${event.getFinishDate().toLocalTime()}">
                 </div>
 
                 <input type="hidden" name="eventId" th:value="${event.getId()}">
 
-                <button type="submit" class="btn btn-dark">Submit</button>
+                <button type="submit" class="btn btn-dark" th:text="#{event.save}">Submit</button>
             </form>
         </div>
 
     </div>
 </div>
+<script type="text/javascript">
+    var startDate = document.getElementById("eventStartDate");
+    var startTime = document.getElementById("eventStartTime");
+    var endDate = document.getElementById("eventFinishDate");
+    var endTime = document.getElementById("eventFinishTime");
+
+    function validateDates() {
+        if (startDate.value > endDate.value) {
+            endDate.setCustomValidity("Invalid date");
+        } else if (startDate.value === endDate.value && startTime.value >= endTime.value) {
+            endTime.setCustomValidity("Invalid time");
+        } else {
+            endTime.setCustomValidity('');
+            endDate.setCustomValidity('');
+        }
+    }
+
+    endDate.onchange = validateDates;
+    endDate.onkeyup = validateDates;
+    endTime.onchange = validateDates;
+    endTime.onchange = validateDates;
+</script>
+<div th:insert="footer :: footer"></div>
 </body>
 </html>

@@ -5,11 +5,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import ua.dmytrokashchenko.conferencesms.domain.Speaker;
 import ua.dmytrokashchenko.conferencesms.entity.RoleEntity;
 import ua.dmytrokashchenko.conferencesms.entity.UserEntity;
 
-import javax.persistence.*;
 import java.util.Optional;
 
 @Repository

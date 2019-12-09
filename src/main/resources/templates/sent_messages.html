@@ -9,28 +9,28 @@
 <body>
 <div th:insert="header :: header"></div>
 <div class="container">
-    <div>
-        <table class="table table-hover">
-            <thead>
-            <tr>
-                <th><strong>Author's name</strong></th>
-                <th><strong>Author's email</strong></th>
-                <th><strong>Subject</strong></th>
-                <th><strong>Message</strong></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="message : ${messages}">
-                <td><span th:text="${message.getAuthor().getFirstName() + ' ' + message.getAuthor().getLastName()}">Author's name</span>
-                </td>
-                <td><span th:text="${message.getAuthor().getEmail()}">Author's email</span></td>
-                <td><span th:text="${message.getSubject()}">Subject</span></td>
-                <td><span th:text="${message.getText()}">Message</span></td>
-            </tr>
-            </tbody>
-        </table>
+
+    <div th:each="message : ${messages}">
+        <div class="card m-2 shadow bg-white rounded">
+            <h5 class="card-header">
+                <strong th:text="#{email.author}"></strong>
+                <span th:text="${message.getAuthor().getFirstName() + ' ' + message.getAuthor().getLastName()}"></span>
+                <span th:text="${message.getAuthor().getEmail()}"></span>
+            </h5>
+            <div class="card-body">
+                <p class="card-text">
+                    <strong th:text="#{email.subject}"></strong>
+                    <span th:text="${message.getSubject()}"></span>
+                </p>
+                <p class="card-text">
+                    <strong th:text="#{email.message}"></strong>
+                    <span th:text="${message.getText()}"></span>
+                </p>
+            </div>
+        </div>
     </div>
     <div th:replace="pagination::pagination (pagination=${messages})"></div>
 </div>
+<div th:insert="footer :: footer"></div>
 </body>
 </html>

@@ -10,17 +10,17 @@
 <div th:insert="header :: header"></div>
 <div class="container">
     <div class="row">
-        <div class="col-10">
+        <div class="col-md-12">
             <form th:action="@{/speaker/suggest_presentation}" name="presentation_add" method="POST">
                 <div class="form-group">
                     <label for="presentationTopic">Topic</label>
                     <input name="presentationTopic" type="text" autocomplete="off" class="form-control" id="presentationTopic"
-                           placeholder="Enter topic" required>
+                           placeholder="Enter topic" maxlength="255" required>
                 </div>
                 <div class="form-group">
                     <label for="presentationDescription">Description</label>
                     <textarea name="presentationDescription" class="form-control" id="presentationDescription" autocomplete="off"
-                              placeholder="Enter address details" required></textarea>
+                              placeholder="Enter address details" maxlength="2000" required></textarea>
                 </div>
 
                 <div class="form-group">
@@ -44,5 +44,6 @@
 
     </div>
 </div>
+<div th:insert="footer :: footer"></div>
 </body>
 </html>

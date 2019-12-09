@@ -8,38 +8,19 @@
 </head>
 <body>
 <div th:insert="header :: header"></div>
-    <div class="col-10">
-        <h3>Presentations suggested by speaker: </h3>
-        <table class="table table-hover">
-            <thead>
-            <tr>
-                <th><strong>Topic</strong></th>
-                <th><strong>Details</strong></th>
-                <th><strong>Start</strong></th>
-                <th><strong>Duration(min)</strong></th>
-                <th><strong>Action</strong></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="presentation : ${presentations}">
-                <td><span th:text="${presentation.getTopic()}">Presentation topic</span></td>
-                <td><span th:text="${presentation.getDescription()}">Presentation description</span></td>
-                <td><span th:text="${presentation.getStartDate().toLocalDate()} + ' ' + ${presentation.getStartDate().toLocalTime()}" >Start</span></td>
-                <td><span th:text="${presentation.getDuration().toMinutes()}">Duration</span></td>
-                <td>
-                    <div>
-                        <form th:action="@{/management/{eventId}/suggested_by_speaker(eventId = ${eventId})}" name="confirm" method="POST">
-                            <input name="presentationId" type="hidden" required th:value="${presentation.getId()}">
-                            <button type="submit" class="btn btn-dark">Confirm</button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-
+<div class="container">
+    <h4 class="m-3" th:text="#{presentation.suggested.by.speaker}"></h4>
+    <div th:each="presentation : ${presentations}">
+        <div th:replace="presentation_template::presentation-simple (presentation = ${presentation})"></div>
+        <div>
+            <form th:action="@{/management/{eventId}/suggested_by_speaker(eventId = ${eventId})}" name="confirm"
+                  method="POST">
+                <input name="presentationId" type="hidden" required th:value="${presentation.getId()}">
+                <button type="submit" class="btn btn-dark" th:text="#{presentation.confirm}">Confirm</button>
+            </form>
+        </div>
     </div>
 </div>
-</div>
+<div th:insert="footer :: footer"></div>
 </body>
 </html>

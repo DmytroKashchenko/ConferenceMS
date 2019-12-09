@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="presentation-simple">
+    <div class="card m-2 shadow bg-white rounded">
+        <!--/*@thymesVar id="presentation" type="ua.dmytrokashchenko.conferencesms.domain.Presentation"*/-->
+        <h5 class="card-header" th:text="${presentation.getTopic()}"></h5>
+        <div class="card-body">
+            <p class="card-text" th:text="${presentation.getDescription()}"></p>
+            <p class="card-text">
+                <strong th:text="#{presentation.start}"></strong>
+                <span th:text="${#temporals.format(presentation.getStartDate(), 'dd.MM.yyyy HH:mm')}"></span>
+            </p>
+            <p class="card-text">
+                <strong th:text="#{presentation.duration}"></strong>
+                <span th:text="${presentation.getDuration().toMinutes()}"></span>
+                <span th:text="#{presentation.duration.minutes}"></span>
+            </p>
+            <p class="card-text">
+                <strong th:text="#{presentation.registrations}"></strong>
+                <span th:text="${presentation.getRegistrations().size()}"></span>
+            </p>
+            <p class="card-text">
+                <strong th:text="#{presentation.visitors}"></strong>
+                <span th:text="${presentation.getNumberOfVisitors()}"></span>
+            </p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

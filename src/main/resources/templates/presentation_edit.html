@@ -10,48 +10,77 @@
 <div th:insert="header :: header"></div>
 <div class="container">
     <div class="row">
-        <div class="col-10">
-            <form th:action="@{/management/presentation_edit}" name="presentation_add" method="POST">
+        <div class="col-12">
+            <form th:action="@{/management/presentation_edit}" th:object="${form}" name="presentation_add"
+                  method="POST">
 
                 <div class="form-group">
-                    <label for="authorEmail">Speaker's email</label>
-                    <input name="authorEmail" type="email" autocomplete="off" class="form-control" id="authorEmail"
-                           placeholder="Enter speaker's email" required th:value="${presentation.getAuthor().getEmail()}">
+                    <label for="authorEmail" th:text="#{user.speaker.email}">Speaker's email</label>
+                    <input th:field="*{authorEmail}" name="authorEmail" type="email" autocomplete="off"
+                           class="form-control" id="authorEmail"
+                           th:placeholder="#{user.speaker.email}" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="presentationTopic">Topic</label>
-                    <input name="presentationTopic" type="text" autocomplete="off" class="form-control" id="presentationTopic"
-                           placeholder="Enter topic" required th:value="${presentation.getTopic()}">
+                    <label for="presentationTopic" th:text="#{presentation.topic}">Topic</label>
+                    <input th:field="*{presentationTopic}" name="presentationTopic" type="text" autocomplete="off"
+                           class="form-control" id="presentationTopic" maxlength="255"
+                           th:placeholder="#{presentation.topic.enter}" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="presentationDescription">Description</label>
-                    <textarea name="presentationDescription" class="form-control" id="presentationDescription" autocomplete="off"
-                              placeholder="Enter address details" required th:text="${presentation.getDescription()}"></textarea>
+                    <label for="presentationDescription" th:text="#{presentation.description}">Description</label>
+                    <textarea th:field="*{presentationDescription}" name="presentationDescription" class="form-control"
+                              id="presentationDescription" autocomplete="off" maxlength="2000"
+                              th:placeholder="#{presentation.description.enter}" required></textarea>
                 </div>
 
                 <div class="form-group">
-                    <label for="presentationStart">Start date and time</label>
-                    <input name="presentationStart" type="datetime-local" autocomplete="off" class="form-control" id="presentationStart"
-                           placeholder="Enter presentation start date and time" required th:value="${presentation.getStartDate()}">
+                    <label for="presentationStartDate" th:text="#{presentation.start.date}">Start date</label>
+                    <div th:if="${#fields.hasErrors('presentationStartDate')}" th:errors="*{presentationStartDate}"
+                         class="alert alert-warning"
+                         role="alert">
+                        Error message.
+                    </div>
+                    <input th:field="*{presentationStartDate}"
+                           name="presentationStartDate" type="date"
+                           autocomplete="off" class="form-control"
+                           id="presentationStartDate"
+                           placeholder="Enter presentation start date" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="presentationDuration">Duration in minutes</label>
-                    <input name="presentationDuration" type="number" min="30" max="240" value="30" step="5"
+                    <label for="presentationStartTime" th:text="#{presentation.start.time}">Start time</label>
+                    <div th:if="${#fields.hasErrors('presentationStartTime')}" th:errors="*{presentationStartTime}"
+                         class="alert alert-warning"
+                         role="alert">
+                        Error message.
+                    </div>
+                    <input th:field="*{presentationStartTime}"
+                           name="presentationStartTime" type="time"
+                           autocomplete="off" class="form-control"
+                           id="presentationStartTime"
+                           placeholder="Enter presentation time" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="presentationDuration" th:text="#{presentation.duration.min}">Duration in minutes</label>
+                    <input th:field="*{duration}" name="presentationDuration" type="number" min="30" max="240"
+                           value="30" step="5"
                            autocomplete="off" class="form-control" id="presentationDuration"
-                           placeholder="Enter presentation duration" required th:value="${presentation.getDuration().toMinutes()}">
+                           placeholder="Enter presentation duration" required>
                 </div>
 
-                <input type="hidden" name="eventId" th:value="${eventId}">
-                <input type="hidden" name="presentationId" th:value="${presentation.getId()}">
+                <input type="hidden" name="eventId" th:field="*{eventId}">
+                <input type="hidden" name="presentationId" th:field="*{presentationId}">
+                <input type="hidden" name="presentationStatus" th:field="*{presentationStatus}">
 
-                <button type="submit" class="btn btn-dark">Submit</button>
+                <button type="submit" class="btn btn-dark" th:text="#{presentation.save}">Submit</button>
             </form>
         </div>
 
     </div>
 </div>
+<div th:insert="footer :: footer"></div>
 </body>
 </html>

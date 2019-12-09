@@ -11,43 +11,78 @@
 <div class="container">
     <div class="row">
         <div class="col-6">
-            <form th:action="@{/registration}" name="registration" method="POST">
+            <!--/*@thymesVar id="user" type="ua.dmytrokashchenko.conferencesms.domain.User"*/-->
+            <form th:action="@{/registration}" th:object="${user}" name="registration" method="POST">
                 <div class="form-group">
-                    <label for="firstName">First Name</label>
-                    <input name="firstName" type="text" autocomplete="off" class="form-control" id="firstName"
-                           placeholder="Enter your First Name" required>
+                    <label for="firstName" th:text="#{user.first.name}">First Name</label>
+                    <div th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" class="alert alert-warning"
+                         role="alert">
+                        Error message.
+                    </div>
+                    <input th:field="*{firstName}" name="firstName" type="text" autocomplete="off" class="form-control"
+                           id="firstName" pattern="([A-Z]([a-z]+\s?)){1,3}" maxlength="50" minlength="2"
+                           th:placeholder="#{user.enter.first.name}" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastName" th:text="#{user.last.name}">Last Name</label>
+                    <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="alert alert-warning"
+                         role="alert">
+                        Error message.
+                    </div>
+                    <input th:field="*{lastName}" name="lastName" type="text" autocomplete="off" class="form-control"
+                           id="lastName" pattern="([A-Z]([a-z]+\s?)){1,3}" maxlength="50" minlength="2"
+                           th:placeholder="#{user.enter.last.name}" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="lastName">Last Name</label>
-                    <input name="lastName" type="text" autocomplete="off" class="form-control" id="lastName"
-                           placeholder="Enter your Last Name" required>
+                    <label for="email" th:text="#{user.email}">Email address</label>
+                    <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="alert alert-warning"
+                         role="alert">
+                        Error message.
+                    </div>
+                    <input th:field="*{email}" name="email" type="email" autocomplete="off" class="form-control"
+                           id="email" maxlength="254"
+                           th:placeholder="#{user.enter.email}" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="email">Email address</label>
-                    <input name="email" type="email" autocomplete="off" class="form-control" id="email"
-                           placeholder="Enter email" required>
+                    <label for="password" th:text="#{user.password}">Password</label>
+                    <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="alert alert-warning"
+                         role="alert">
+                        Error message.
+                    </div>
+                    <input th:field="*{password}" name="password" type="password" autocomplete="new-password"
+                           class="form-control" id="password" th:placeholder="#{user.enter.password}" maxlength="255"
+                           pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Password</label>
-                    <input name="password" type="password" autocomplete="new-password" class="form-control"
-                           id="password"
-                           placeholder="Password" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="password2">Confirm Password</label>
+                    <label for="password2" th:text="#{user.confirm.password}">Confirm Password</label>
                     <input name="password2" type="password" autocomplete="new-password" class="form-control"
-                           id="password2"
-                           placeholder="Confirm Password" required>
+                           id="password2" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}" maxlength="255"
+                           th:placeholder="#{user.confirm.password}" required>
                 </div>
-
-                <button type="submit" class="btn btn-dark">Submit</button>
+                <button type="submit" class="btn btn-dark" th:text="#{user.sign.up}">Submit</button>
             </form>
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    var password = document.getElementById("password")
+        , password2 = document.getElementById("password2");
+
+    function validatePassword() {
+        if (password.value != password2.value) {
+            password2.setCustomValidity("Passwords Don't Match");
+        } else {
+            password2.setCustomValidity('');
+        }
+    }
+
+    password.onchange = validatePassword;
+    password2.onkeyup = validatePassword;
+</script>
+<div th:insert="footer :: footer"></div>
 </body>
 </html>

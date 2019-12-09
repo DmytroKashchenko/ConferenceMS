@@ -9,40 +9,17 @@
 <body>
 <div th:insert="header :: header"></div>
 <div class="container">
-
-    <div class="col-10">
-        <table class="table table-hover">
-            <thead>
-            <tr>
-                <th><strong>Address ID</strong></th>
-                <th><strong>Address name</strong></th>
-                <th><strong>Country</strong></th>
-                <th><strong>City</strong></th>
-                <th><strong>Details</strong></th>
-                <th><strong>Choice</strong></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="address : ${addresses}">
-                <td><span th:text="${address.getId()}">Address ID</span></td>
-                <td><span th:text="${address.getName()}">Address name</span></td>
-                <td><span th:text="${address.getCountry()}">Country</span></td>
-                <td><span th:text="${address.getCity()}">City</span></td>
-                <td><span th:text="${address.getDetailedAddress()}">Details</span></td>
-                <td>
-                    <div>
-                        <form th:action="@{/management/address_selection}" name="address_selection" method="POST">
-                            <input name="addressId" type="hidden" required th:value="${address.getId()}">
-                            <input name="eventId" type="hidden" required th:value="${eventId}">
-                            <button type="submit" class="btn btn-dark">Choice</button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+    <h4 th:text="#{address.addresses}" class="m-3"></h4>
+    <div th:each="address : ${addresses}">
+        <div th:replace="address_template::address-simple (address = ${address})"></div>
+        <form th:action="@{/management/address_selection}" name="address_selection" method="POST" class="m-3">
+            <input name="addressId" type="hidden" required th:value="${address.getId()}">
+            <input name="eventId" type="hidden" required th:value="${eventId}">
+            <button type="submit" class="btn btn-dark" th:text="#{address.choose}">Choose</button>
+        </form>
     </div>
     <div th:replace="pagination::pagination (pagination=${addresses})"></div>
 </div>
+<div th:insert="footer :: footer"></div>
 </body>
 </html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="footer">
+    <footer id="footer" class="footer py-1 bg-dark text-white-50 mt-5">
+        <div class="footer-copyright text-center py-1">
+            <a th:href="@{/}" class="text-white-50"> Conferences MS</a>
+            <span><i>by Dmytro Kashchenko</i></span>
+        </div>
+        <script type="text/javascript">
+            var f = document.getElementById("footer");
+
+            function footerPos() {
+                if (window.innerHeight >= document.body.clientHeight) {
+                    f.className += " fixed-bottom";
+                }
+            }
+
+            window.onresize = footerPos;
+            onload = footerPos;
+        </script>
+    </footer>
+</div>
+</body>
+</html>

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>User list</title>
+    <title>Register visitors</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
@@ -14,10 +14,10 @@
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th><strong>Name</strong></th>
-                    <th><strong>Surname</strong></th>
-                    <th><strong>Email</strong></th>
-                    <th><strong>Register visitor</strong></th>
+                    <th><strong th:text="#{user.first.name}">Name</strong></th>
+                    <th><strong th:text="#{user.last.name}">Surname</strong></th>
+                    <th><strong th:usemap="#{user.email}">Email</strong></th>
+                    <th><strong th:text="#{presentation.register.visitor.button}">Register visitor</strong></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -30,7 +30,9 @@
                             <input name="presentationId" type="hidden" required th:value="${presentation.getId()}">
                             <input name="eventId" type="hidden" required th:value="${eventId}">
                             <input name="userId" type="hidden" required th:value="${user.getId()}">
-                            <button type="submit" class="btn btn-dark" th:disabled="${presentation.getRegistrations().get(user) == true}">
+                            <button type="submit" class="btn btn-dark"
+                                    th:disabled="${presentation.getRegistrations().get(user) == true}"
+                                    th:text="#{presentation.register.visitor.button}">
                                 Register visitor
                             </button>
                         </form>
@@ -38,10 +40,9 @@
                 </tr>
                 </tbody>
             </table>
-
-
         </div>
     </div>
 </div>
+<div th:insert="footer :: footer"></div>
 </body>
 </html>

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Addresses management</title>
+    <title>Addresses list</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
@@ -12,9 +12,9 @@
     <h4 th:text="#{address.addresses}" class="m-3"></h4>
     <div th:each="address : ${addresses}">
         <div th:replace="address_template::address-simple (address = ${address})"></div>
-        <a th:href="@{/management/address_edit/(addressId=${address.getId()})}"
-           class="btn btn-secondary btn m-2" role="button" aria-pressed="true"
-           th:text="#{address.edit.button}">Edit address</a>
+        <a th:href="@{/management/event_add(addressId = ${address.getId()})}"
+           class="btn btn-secondary btn m-3 shadow-sm rounded" role="button" aria-pressed="true"
+           th:text="#{address.select.new}">Select address</a>
     </div>
     <div th:replace="pagination::pagination (pagination=${addresses})"></div>
 </div>

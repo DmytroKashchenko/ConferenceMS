@@ -2,6 +2,7 @@ package ua.dmytrokashchenko.conferencesms.domain;
 
 import lombok.Builder;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -19,8 +20,10 @@ public class Message {
     private Set<User> recipients;
 
     @NotEmpty(message = "*Please provide subject")
+    @Length(max = 255)
     private String subject;
 
     @NotEmpty(message = "*Please provide message")
+    @Length(max = 10000)
     private String text;
 }

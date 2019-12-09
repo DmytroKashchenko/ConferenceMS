@@ -2,7 +2,10 @@ package ua.dmytrokashchenko.conferencesms.domain;
 
 import lombok.Builder;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,11 +15,24 @@ import java.util.List;
 @Builder
 public class Event {
     private Long id;
+
+    @NotEmpty
+    @Length(max = 255)
     private String name;
+
+    @NotEmpty
+    @Length(max = 2000)
     private String eventDetails;
+
+    @NotNull
     private LocalDateTime startDate;
+
+    @NotNull
     private LocalDateTime finishDate;
+
+    @NotNull
     private Address address;
+
     private List<Presentation> presentations;
 
     public void addPresentation(Presentation presentation) {

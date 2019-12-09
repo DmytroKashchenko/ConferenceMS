@@ -13,11 +13,11 @@
         <table class="table table-hover">
             <thead>
             <tr>
-                <th><strong>Name</strong></th>
-                <th><strong>Surname</strong></th>
-                <th><strong>Email</strong></th>
-                <th><strong>Role</strong></th>
-                <th><strong>Action</strong></th>
+                <th><strong th:text="#{user.first.name}">Name</strong></th>
+                <th><strong th:text="#{user.last.name}">Surname</strong></th>
+                <th><strong th:text="#{user.email}">Email</strong></th>
+                <th><strong th:text="#{user.role}">Role</strong></th>
+                <th><strong th:text="#{user.action.button}">Action</strong></th>
             </tr>
             </thead>
             <tbody>
@@ -34,26 +34,31 @@
                 <td>
                     <form class="form-inline" method="post" th:action="@{/admin/set_role}">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="roleName" id="inlineRadio1" value="ADMIN" required>
+                            <input class="form-check-input" type="radio" name="roleName" id="inlineRadio1" value="ADMIN"
+                                   required>
                             <label class="form-check-label" for="inlineRadio1" th:text="#{role.admin}">ADMIN</label>
                         </div>
 
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="roleName" id="inlineRadio2" value="MODERATOR" required>
-                            <label class="form-check-label" for="inlineRadio2" th:text="#{role.moderator}">MODERATOR</label>
+                            <input class="form-check-input" type="radio" name="roleName" id="inlineRadio2"
+                                   value="MODERATOR" required>
+                            <label class="form-check-label" for="inlineRadio2"
+                                   th:text="#{role.moderator}">MODERATOR</label>
                         </div>
 
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="roleName" id="inlineRadio3" value="SPEAKER" required>
+                            <input class="form-check-input" type="radio" name="roleName" id="inlineRadio3"
+                                   value="SPEAKER" required>
                             <label class="form-check-label" for="inlineRadio3" th:text="#{role.speaker}">SPEAKER</label>
                         </div>
 
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="roleName" id="inlineRadio4" value="USER" required>
+                            <input class="form-check-input" type="radio" name="roleName" id="inlineRadio4" value="USER"
+                                   required>
                             <label class="form-check-label" for="inlineRadio3" th:text="#{role.user}">USER</label>
                         </div>
                         <input type="hidden" name="userId" th:value="${user.getId()}" required>
-                        <button type="submit" class="btn btn-dark mb-2">Save</button>
+                        <button type="submit" class="btn btn-dark mb-2" th:text="#{user.save.button}">Save</button>
                     </form>
                 </td>
             </tr>
@@ -62,5 +67,6 @@
     </div>
     <div th:replace="pagination::pagination (pagination=${users})"></div>
 </div>
+<div th:insert="footer :: footer"></div>
 </body>
 </html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="event-simple">
+    <div class="card m-2 shadow bg-white rounded">
+        <!--/*@thymesVar id="event" type="ua.dmytrokashchenko.conferencesms.domain.Event"*/-->
+        <h5 class="card-header" th:text="${event.getName()}"></h5>
+        <div class="card-body">
+            <p class="card-text" th:text="${event.getEventDetails()}"></p>
+            <p class="card-text">
+                <strong th:text="#{event.start}"></strong>
+                <span th:text="${#temporals.format(event.getStartDate(), 'dd.MM.yyyy HH:mm')}"></span>
+            </p>
+            <p class="card-text">
+                <strong th:text="#{event.end}"></strong>
+                <span th:text="${#temporals.format(event.getFinishDate(), 'dd.MM.yyyy HH:mm')}"></span>
+            </p>
+            <h5 class="card-title" th:text="#{address}"></h5>
+            <p class="card-text">
+                <strong th:text="#{address.name}"></strong>
+                <span th:text="${event.getAddress().getName()}"></span>
+            </p>
+            <p class="card-text">
+                <strong th:text="#{address.country}"></strong>
+                <span th:text="${event.getAddress().getCountry()}"></span>
+            </p>
+            <p class="card-text">
+                <strong th:text="#{address.city}"></strong>
+                <span th:text="${event.getAddress().getCity()}"></span>
+            </p>
+            <p class="card-text">
+                <strong th:text="#{address.details}"></strong>
+                <span th:text="${event.getAddress().getDetailedAddress()}"></span>
+            </p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

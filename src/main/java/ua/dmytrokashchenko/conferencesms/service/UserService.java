@@ -27,4 +27,8 @@ public interface UserService extends UserDetailsService {
     Page<User> getUsersByRole(Role role, Pageable pageable);
 
     Map<User, Double> getSpeakerRatings(Set<User> users);
+
+    boolean isRegistered(User user);
+
+    boolean isRegistered(String email);
 }

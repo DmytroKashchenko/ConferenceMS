@@ -7,15 +7,20 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.Assert;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import ua.dmytrokashchenko.conferencesms.controller.form.PresentationForm;
 import ua.dmytrokashchenko.conferencesms.domain.*;
 import ua.dmytrokashchenko.conferencesms.service.*;
 import ua.dmytrokashchenko.conferencesms.service.util.BonusUtil;
 
+import javax.validation.Valid;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,15 +33,17 @@ public class ManagementController {
     private final UserService userService;
     private final BonusService bonusService;
     private final EmailSenderService emailSenderService;
+    private final PresentationService presentationService;
 
     public ManagementController(AddressService addressService, EventService eventService,
                                 UserService userService, BonusService bonusService,
-                                EmailSenderService emailSenderService) {
+                                EmailSenderService emailSenderService, PresentationService presentationService) {
         this.addressService = addressService;
         this.eventService = eventService;
         this.userService = userService;
         this.bonusService = bonusService;
         this.emailSenderService = emailSenderService;
+        this.presentationService = presentationService;
     }
 
     @GetMapping("/address_add")
@@ -106,13 +113,19 @@ public class ManagementController {
     public String addEvent(@RequestParam Long addressId,
                            @RequestParam String eventName,
                            @RequestParam String eventDetails,
-                           @RequestParam("eventStart")
-                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventStart,
-                           @RequestParam("eventFinish")
-                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventFinish,
+                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                                   LocalDate eventStartDate,
+                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                                   LocalDate eventFinishDate,
+                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+                                   LocalTime eventStartTime,
+                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+                                   LocalTime eventFinishTime,
                            @RequestParam(required = false) Long eventId) {
-
         Address address = addressService.getAddressById(addressId);
+
+        LocalDateTime eventStart = LocalDateTime.of(eventStartDate, eventStartTime);
+        LocalDateTime eventFinish = LocalDateTime.of(eventFinishDate, eventFinishTime);
 
         Event event = Event.builder()
                 .id(eventId)
@@ -128,8 +141,24 @@ public class ManagementController {
     }
 
     @GetMapping("/event_add")
-    public String addEvent() {
-        return "event_add";
+    public ModelAndView addEvent(@RequestParam(required = false) Long addressId) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("event_add");
+        if (addressId != null) {
+            Address address = addressService.getAddressById(addressId);
+            modelAndView.addObject("address", address);
+        }
+        return modelAndView;
+    }
+
+    @GetMapping("/event_add/select_address")
+    public ModelAndView addressSelection(
+            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("address_selection_for_new_event");
+        Page<Address> addresses = addressService.getAddresses(pageable);
+        modelAndView.addObject("addresses", addresses);
+        return modelAndView;
     }
 
     @GetMapping
@@ -152,40 +181,34 @@ public class ManagementController {
     }
 
     @GetMapping("/{eventId}/presentation_add")
-    public ModelAndView presentationSave(@PathVariable Long eventId) {
+    public ModelAndView presentationSave(@PathVariable Long eventId, PresentationForm presentationForm) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("presentation_add");
         modelAndView.addObject("eventId", eventId);
+        modelAndView.addObject("form", presentationForm);
         return modelAndView;
     }
 
     @PostMapping("/presentation_add")
-    public String presentationSave(@RequestParam String authorEmail,
-                                   @RequestParam String presentationTopic,
-                                   @RequestParam String presentationDescription,
-                                   @RequestParam
-                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                           LocalDateTime presentationStart,
-                                   @RequestParam Integer presentationDuration,
-                                   @RequestParam Long eventId,
-                                   @RequestParam String presentationStatus) {
-
-        User author = userService.getByEmail(authorEmail);
-        Event event = eventService.getById(eventId);
-        Duration duration = Duration.ofMinutes(presentationDuration);
-        PresentationStatus status;
-        if (presentationStatus != null && presentationStatus.equals("Confirmed")) {
-            status = PresentationStatus.CONFIRMED;
-        } else if (presentationStatus != null && presentationStatus.equals("Suggested by moderator")) {
-            status = PresentationStatus.SUGGESTED_BY_MODERATOR;
-        } else {
-            status = PresentationStatus.REJECTED;
+    public String presentationSave(@Valid @ModelAttribute("form") PresentationForm form,
+                                   BindingResult bindingResult) {
+        System.out.println(form);
+        Event event = eventService.getById(form.getEventId());
+        if (!isCorrectPresentationTime(form)) {
+            bindingResult.addError(new FieldError("form", "presentationStartTime",
+                    "Incorrect time"));
         }
+        if (bindingResult.hasErrors()) {
+            return "presentation_add";
+        }
+        User author = userService.getByEmail(form.getAuthorEmail());
+        Duration duration = Duration.ofMinutes(form.getDuration());
+        PresentationStatus status = PresentationStatus.valueOf(form.getPresentationStatus());
         Presentation presentation = Presentation.builder()
                 .author(author)
-                .topic(presentationTopic)
-                .description(presentationDescription)
-                .startDate(presentationStart)
+                .topic(form.getPresentationTopic())
+                .description(form.getPresentationDescription())
+                .startDate(LocalDateTime.of(form.getPresentationStartDate(), form.getPresentationStartTime()))
                 .duration(duration)
                 .status(status)
                 .build();
@@ -200,47 +223,47 @@ public class ManagementController {
     public ModelAndView presentationEdit(@PathVariable Long presentationId, @PathVariable Long eventId) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("presentation_edit");
+
         Event event = eventService.getById(eventId);
-        Presentation presentation = null;
-        for (Presentation presentationFromEvent : event.getPresentations()) {
-            if (presentationFromEvent.getId().equals(presentationId)) {
-                presentation = presentationFromEvent;
-            }
-        }
-        modelAndView.addObject("presentation", presentation);
-        modelAndView.addObject("eventId", eventId);
+        Presentation presentation = event.getPresentationById(presentationId);
+
+        PresentationForm form = new PresentationForm();
+        form.setEventId(eventId);
+        form.setPresentationId(presentationId);
+        form.setPresentationTopic(presentation.getTopic());
+        form.setPresentationDescription(presentation.getDescription());
+        form.setPresentationStartDate(presentation.getStartDate().toLocalDate());
+        form.setPresentationStartTime(presentation.getStartDate().toLocalTime());
+        form.setDuration(presentation.getDuration().toMinutes());
+        form.setPresentationStatus(presentation.getStatus().toString());
+        form.setAuthorEmail(presentation.getAuthor().getEmail());
+        modelAndView.addObject("form", form);
         return modelAndView;
     }
 
     @PostMapping("/presentation_edit")
-    public String presentationEdit(@RequestParam String authorEmail,
-                                   @RequestParam String presentationTopic,
-                                   @RequestParam String presentationDescription,
-                                   @RequestParam
-                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                           LocalDateTime presentationStart,
-                                   @RequestParam Integer presentationDuration,
-                                   @RequestParam Long eventId,
-                                   @RequestParam Long presentationId) {
-
-        User author = userService.getByEmail(authorEmail);
-        Event event = eventService.getById(eventId);
-        Presentation presentation = null;
-        for (Presentation presentationFromEvent : event.getPresentations()) {
-            if (presentationFromEvent.getId().equals(presentationId)) {
-                presentation = presentationFromEvent;
-            }
+    public String presentationEdit(@Valid @ModelAttribute("form") PresentationForm form, BindingResult bindingResult) {
+        if (!isCorrectPresentationTime(form)) {
+            bindingResult.addError(new FieldError("form", "presentationStartTime",
+                    "Incorrect time"));
         }
-        Duration duration = Duration.ofMinutes(presentationDuration);
-        Assert.notNull(presentation, "Invalid presentation ID");
+        if (bindingResult.hasErrors()) {
+            System.out.println(bindingResult.getAllErrors());
+            return "presentation_edit";
+        }
+        User author = userService.getByEmail(form.getAuthorEmail());
+        Event event = eventService.getById(form.getEventId());
+        Presentation presentation = event.getPresentationById(form.getPresentationId());
+        Duration duration = Duration.ofMinutes(form.getDuration());
+
         presentation.setAuthor(author);
-        presentation.setTopic(presentationTopic);
-        presentation.setDescription(presentationDescription);
-        presentation.setStartDate(presentationStart);
+        presentation.setTopic(form.getPresentationTopic());
+        presentation.setDescription(form.getPresentationDescription());
+        presentation.setStartDate(LocalDateTime.of(form.getPresentationStartDate(), form.getPresentationStartTime()));
         presentation.setDuration(duration);
         eventService.save(event);
 
-        return "redirect:" + eventId;
+        return "redirect:" + form.getEventId();
     }
 
     @GetMapping("/{eventId}")
@@ -295,17 +318,7 @@ public class ManagementController {
     public String registerVisitor(@RequestParam Long eventId,
                                   @RequestParam Long presentationId,
                                   @RequestParam Long userId) {
-        Event event = eventService.getById(eventId);
-        Presentation presentation = event.getPresentationById(presentationId);
-        User user = userService.getById(userId);
-        if (presentation.getRegistrations().get(user) == null) {
-            return "redirect:/"; //TODO need to add processing
-        }
-        if (presentation.getRegistrations().get(user)) {
-            return "redirect:/";  //TODO need to add processing
-        }
-        presentation.getRegistrations().put(user, true);
-        eventService.save(event);
+        presentationService.registerVisitor(presentationId, userId);
         return String.format("redirect:/management/%d/register_visitors/%d/all", eventId, presentationId);
     }
 
@@ -361,5 +374,24 @@ public class ManagementController {
                 .build();
         emailSenderService.sendMessages(msg);
         return "redirect:/management";
+    }
+
+    private boolean isCorrectPresentationTime(PresentationForm form) {
+        Event event = eventService.getById(form.getEventId());
+        LocalDateTime start = LocalDateTime.of(form.getPresentationStartDate(), form.getPresentationStartTime());
+        LocalDateTime end = start.plus(Duration.ofMinutes(form.getDuration()));
+        if (start.isBefore(event.getStartDate()) || end.isAfter(event.getFinishDate())) {
+            return false;
+        }
+        List<Presentation> presentations = event.getPresentations();
+        if (form.getPresentationId() != null) {
+            Presentation presentation = event.getPresentationById(form.getPresentationId());
+            presentations.remove(presentation);
+        }
+        return presentations.stream()
+                .filter(x -> x.getStatus().equals(PresentationStatus.CONFIRMED))
+                .filter(x -> !x.getFinishDateTime().isBefore(start))
+                .filter(x -> !x.getStartDate().isAfter(end))
+                .collect(Collectors.toSet()).isEmpty();
     }
 }

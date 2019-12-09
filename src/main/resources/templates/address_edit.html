@@ -14,37 +14,41 @@
             <form th:action="@{/management/address_edit}" name="address_add" method="POST">
 
                 <div class="form-group">
-                    <label for="addressName">Address name</label>
+                    <label for="addressName" th:text="#{address.name}">Address name</label>
                     <input name="addressName" type="text" autocomplete="off" class="form-control" id="addressName"
-                           placeholder="Enter address name" required th:value="${address.getName()}">
+                           th:placeholder="#{address.name.enter}" maxlength="255" required
+                           th:value="${address.getName()}">
                 </div>
 
                 <div class="form-group">
-                    <label for="addressCountry">Country</label>
+                    <label for="addressCountry" th:text="#{address.country}">Country</label>
                     <input name="addressCountry" type="text" autocomplete="off" class="form-control" id="addressCountry"
-                           placeholder="Enter country" required th:value="${address.getCountry()}">
+                           th:placeholder="#{address.country.enter}" maxlength="100" required
+                           th:value="${address.getCountry()}">
                 </div>
 
                 <div class="form-group">
-                    <label for="addressCity">City</label>
+                    <label for="addressCity" th:text="#{address.city}">City</label>
                     <input name="addressCity" type="text" autocomplete="off" class="form-control" id="addressCity"
-                           placeholder="Enter conference name" required th:value="${address.getCity()}">
+                           th:placeholder="#{address.city.enter}" maxlength="50" required
+                           th:value="${address.getCity()}">
                 </div>
 
                 <div class="form-group">
-                    <label for="addressDetails">Address details</label>
+                    <label for="addressDetails" th:text="#{address.details}">Address details</label>
                     <textarea name="addressDetails" class="form-control" id="addressDetails" autocomplete="off"
-                              placeholder="Enter address details" required th:text="${address.getDetailedAddress()}">
+                              th:placeholder="#{address.details.enter}" maxlength="255" required
+                              th:text="${address.getDetailedAddress()}">
                     </textarea>
                 </div>
 
                 <input name="addressId" type="hidden" required th:value="${address.getId()}">
 
-                <button type="submit" class="btn btn-dark">Submit</button>
+                <button type="submit" class="btn btn-dark" th:text="#{address.save}">Submit</button>
             </form>
         </div>
-
     </div>
 </div>
+<div th:insert="footer :: footer"></div>
 </body>
 </html>

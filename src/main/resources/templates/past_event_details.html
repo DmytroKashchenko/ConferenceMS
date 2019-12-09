@@ -9,149 +9,41 @@
 <body>
 <div th:insert="header :: header"></div>
 <div class="container">
-    <div class="col-10">
-        <h3>Conference: </h3>
-        <table class="table table-hover">
-            <tbody>
-            <tr>
-                <td>
-                    <strong>Conference name: </strong>
-                </td>
-                <td>
-                    <span th:text="${event.getName()}"></span>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <strong>Conference details: </strong>
-                </td>
-                <td>
-                    <span th:text="${event.getEventDetails()}"></span>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <strong>Start: </strong>
-                </td>
-                <td>
-                    <strong>on </strong>
-                    <span th:text="${event.getStartDate().toLocalDate()}"></span>
-                    <strong>at </strong>
-                    <span th:text="${event.getStartDate().toLocalTime()}"></span>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <strong>End: </strong>
-                </td>
-                <td class="col-xs-9">
-                    <strong>on </strong>
-                    <span th:text="${event.getFinishDate().toLocalDate()}"></span>
-                    <strong>at </strong>
-                    <span th:text="${event.getFinishDate().toLocalTime()}"></span>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <strong>Address: </strong>
-                </td>
-                <td>
-                    <span th:text="${event.getAddress().getName()}"></span>
-                </td>
-            </tr>
-            <tr>
-                <td>
-
-                </td>
-                <td>
-                    <span th:text="${event.getAddress().getCountry()}"></span>
-                </td>
-            </tr>
-            <tr>
-                <td>
-
-                </td>
-                <td>
-                    <span th:text="${event.getAddress().getCity()}"></span>
-                </td>
-            </tr>
-            <tr>
-                <td>
-
-                </td>
-                <td>
-                    <span th:text="${event.getAddress().getDetailedAddress()}"></span>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-
-
-    <div class="col-10">
-        <h3>Presentations: </h3>
-        <table class="table table-hover">
-            <thead>
-            <tr>
-                <th><strong>Topic</strong></th>
-                <th><strong>Details</strong></th>
-                <th><strong>Start</strong></th>
-                <th><strong>Duration(min)</strong></th>
-                <th><strong>Registrations/Visitors</strong></th>
-                <th><strong>Action</strong></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="presentation : ${presentations}">
-                <td><span th:text="${presentation.getTopic()}">Presentation topic</span></td>
-                <td><span th:text="${presentation.getDescription()}">Presentation description</span></td>
-                <td><span
-                        th:text="${presentation.getStartDate().toLocalDate()} + ' ' + ${presentation.getStartDate().toLocalTime()}">Start</span>
-                </td>
-                <td><span th:text="${presentation.getDuration().toMinutes()}">Duration</span></td>
-
-                <td><span th:text="${presentation.getRegistrations().size() + ' / '
-                + presentation.getNumberOfVisitors()}">Registrations/Visitors</span></td>
-                <td>
-                    <div>
-                        <form th:action="@{/rate_presentation}" name="rate" method="POST">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="rating" id="inlineRadio1" value="1">
-                                <label class="form-check-label" for="inlineRadio1">1</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="rating" id="inlineRadio2" value="2">
-                                <label class="form-check-label" for="inlineRadio2">2</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="rating" id="inlineRadio3" value="3">
-                                <label class="form-check-label" for="inlineRadio3">3</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="rating" id="inlineRadio4" value="4">
-                                <label class="form-check-label" for="inlineRadio4">4</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="rating" id="inlineRadio5" value="5">
-                                <label class="form-check-label" for="inlineRadio5">5</label>
-                            </div>
-                            <input name="presentationId" type="hidden" required th:value="${presentation.getId()}">
-                            <button type="submit" class="btn btn-dark" th:disabled="${presentation.getRegistrations().get(user) == null || !presentation.getRegistrations().get(user)}">
-                                Rate!
-                            </button>
-                        </form>
-                    </div>
-
-
-
-
-                </td>
-            </tr>
-            </tbody>
-        </table>
-
+    <h4 th:text="#{event}" class="m-3"></h4>
+    <div th:replace="event_template::event-simple (event = ${event})"></div>
+    <h4 th:text="#{presentations}" class="m-3"></h4>
+    <div th:each="presentation : ${presentations}">
+        <div th:replace="presentation_template::presentation-simple (presentation = ${presentation})"></div>
+        <form th:action="@{/rate_presentation}" name="rate" method="POST" class="m-3">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="rating" id="inlineRadio1" value="1">
+                <label class="form-check-label" for="inlineRadio1">1</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="rating" id="inlineRadio2" value="2">
+                <label class="form-check-label" for="inlineRadio2">2</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="rating" id="inlineRadio3" value="3">
+                <label class="form-check-label" for="inlineRadio3">3</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="rating" id="inlineRadio4" value="4">
+                <label class="form-check-label" for="inlineRadio4">4</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="rating" id="inlineRadio5" value="5">
+                <label class="form-check-label" for="inlineRadio5">5</label>
+            </div>
+            <input name="presentationId" type="hidden" required th:value="${presentation.getId()}">
+            <input type="hidden" name="eventId" required th:value="${event.getId()}">
+            <button type="submit" class="btn btn-dark m-2"
+                    th:disabled="${presentation.getRegistrations().get(user) == null || !presentation.getRegistrations().get(user)}"
+                    th:text="#{presentation.rate}">Rate!
+            </button>
+        </form>
     </div>
 </div>
-</div>
+<div th:insert="footer :: footer"></div>
 </body>
 </html>

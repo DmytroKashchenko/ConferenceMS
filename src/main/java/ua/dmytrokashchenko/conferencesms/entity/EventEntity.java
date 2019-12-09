@@ -22,7 +22,7 @@ public class EventEntity {
     @Column(name = "event_name")
     private String name;
 
-    @Column(name = "event_details")
+    @Column(name = "event_details", length = 2000)
     private String eventDetails;
 
     @Column(name = "start")

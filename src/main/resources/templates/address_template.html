@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="address-simple">
+    <div class="card m-2 shadow bg-white rounded">
+        <!--/*@thymesVar id="address" type="ua.dmytrokashchenko.conferencesms.domain.Address"*/-->
+        <h5 class="card-header" th:text="${address.getName()}"></h5>
+        <div class="card-body">
+            <p class="card-text">
+                <strong>ID</strong>
+                <span th:text="${address.getId()}"></span>
+            </p>
+            <p class="card-text">
+                <strong th:text="#{address.country}"></strong>
+                <span th:text="${address.getCountry()}"></span>
+            </p>
+            <p class="card-text">
+                <strong th:text="#{address.city}"></strong>
+                <span th:text="${address.getCity()}"></span>
+            </p>
+            <p class="card-text">
+                <strong th:text="#{address.details}"></strong>
+                <span th:text="${address.getDetailedAddress()}"></span>
+            </p>
+        </div>
+    </div>
+</div>
+<div th:insert="footer :: footer"></div>
+</body>
+</html>

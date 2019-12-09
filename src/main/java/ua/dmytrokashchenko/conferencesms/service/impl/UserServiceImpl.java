@@ -16,7 +16,6 @@ import ua.dmytrokashchenko.conferencesms.repository.UserRepository;
 import ua.dmytrokashchenko.conferencesms.service.UserService;
 import ua.dmytrokashchenko.conferencesms.service.exceptions.UserServiceException;
 import ua.dmytrokashchenko.conferencesms.service.mapper.UserMapper;
-import ua.dmytrokashchenko.conferencesms.service.validator.Validator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,27 +26,24 @@ public class UserServiceImpl implements UserService {
     private static final Logger LOGGER = Logger.getLogger(UserServiceImpl.class);
 
     private final UserRepository userRepository;
-    private final Validator<User> validator;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserMapper userMapper;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, Validator<User> validator,
+    public UserServiceImpl(UserRepository userRepository,
                            BCryptPasswordEncoder bCryptPasswordEncoder, UserMapper userMapper) {
         this.userRepository = userRepository;
-        this.validator = validator;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userMapper = userMapper;
     }
 
     @Override
     public void register(User user) {
-        validator.validate(user);
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             LOGGER.info("User with this email is already registered");
             throw new UserServiceException("User with this email is already registered");
         }
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(userMapper.mapUserToEntity(user));
     }
 
@@ -121,6 +117,24 @@ public class UserServiceImpl implements UserService {
         Map<User, Double> ratings = new HashMap<>();
         users.forEach((x) -> ratings.put(x, userRepository.findRatingByUserId(x.getId())));
         return ratings;
+    }
+
+    @Override
+    public boolean isRegistered(User user) {
+        if (user == null) {
+            LOGGER.warn("Invalid user");
+            throw new UserServiceException("Invalid user");
+        }
+        return userRepository.findByEmail(user.getEmail()).isPresent();
+    }
+
+    @Override
+    public boolean isRegistered(String email) {
+        if (email == null || email.isEmpty()) {
+            LOGGER.warn("Invalid email");
+            throw new UserServiceException("Invalid email");
+        }
+        return userRepository.findByEmail(email).isPresent();
     }
 
     @Override

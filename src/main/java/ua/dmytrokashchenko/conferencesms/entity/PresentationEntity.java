@@ -26,7 +26,7 @@ public class PresentationEntity {
     @Column(name = "topic")
     private String topic;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 2000)
     private String description;
 
     @Column(name = "start_date_time")
