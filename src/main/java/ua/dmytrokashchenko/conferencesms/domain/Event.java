@@ -48,7 +48,7 @@ public class Event {
         }
         List<Presentation> presentations = new ArrayList<>(this.presentations);
         List<Presentation> unconfirmedPresentations = new ArrayList<>();
-        for(Presentation p:presentations) {
+        for (Presentation p : presentations) {
             if (p.getStatus() != status) {
                 unconfirmedPresentations.add(p);
             }
@@ -61,7 +61,7 @@ public class Event {
         if (presentations == null || presentationId == null) {
             return null;
         }
-        for (Presentation p:presentations) {
+        for (Presentation p : presentations) {
             if (p.getId().equals(presentationId)) {
                 return p;
             }

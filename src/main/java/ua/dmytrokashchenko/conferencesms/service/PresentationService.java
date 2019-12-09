@@ -10,9 +10,7 @@ import java.util.Set;
 
 @Service
 public interface PresentationService {
-
-    Presentation getPresentationById(Long id);
-
+    
     List<Presentation> getPresentationsByAuthorAndStatus(User author, PresentationStatus status);
 
     Set<Long> getPresentationsIdsOnUserIsRegistered(Long userId);

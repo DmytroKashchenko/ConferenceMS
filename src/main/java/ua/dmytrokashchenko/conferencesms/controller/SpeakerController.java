@@ -1,5 +1,6 @@
 package ua.dmytrokashchenko.conferencesms.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -20,15 +21,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/speaker")
 public class SpeakerController {
     private final PresentationService presentationService;
     private final EventService eventService;
-
-    public SpeakerController(PresentationService presentationService, EventService eventService) {
-        this.presentationService = presentationService;
-        this.eventService = eventService;
-    }
 
     @GetMapping("/suggested_by_moderator")
     public ModelAndView showSuggestedPresentations(@AuthenticationPrincipal User user) {

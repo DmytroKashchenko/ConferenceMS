@@ -1,6 +1,6 @@
 package ua.dmytrokashchenko.conferencesms.service.validator;
 
-import org.apache.log4j.Logger;
+import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
 import ua.dmytrokashchenko.conferencesms.domain.Event;
 import ua.dmytrokashchenko.conferencesms.domain.Presentation;
@@ -13,18 +13,18 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Log4j
 @Component
 public class EventValidator implements Validator<Event> {
-    private static final Logger LOGGER = Logger.getLogger(EventValidator.class);
 
     @Override
     public void validate(Event event) {
         if (event == null) {
-            LOGGER.warn("Invalid event");
+            log.warn("Invalid event");
             throw new EventValidatorException("Invalid event");
         }
         if (event.getAddress() == null) {
-            LOGGER.warn("Invalid event address");
+            log.warn("Invalid event address");
             throw new EventValidatorException("Invalid event address");
         }
         validateAuthors(event);
@@ -38,11 +38,11 @@ public class EventValidator implements Validator<Event> {
         }
         for (Presentation presentation : event.getPresentations()) {
             if (presentation.getAuthor() == null) {
-                LOGGER.warn("Invalid author of the presentation");
+                log.info("Invalid author of the presentation");
                 throw new EventValidatorException("Invalid author of the presentation");
             }
             if (presentation.getAuthor().getRole() != Role.SPEAKER) {
-                LOGGER.warn("The author should be the speaker");
+                log.info("The author should be the speaker");
                 throw new EventValidatorException("The author should be the speaker");
             }
         }
@@ -50,7 +50,7 @@ public class EventValidator implements Validator<Event> {
 
     private void validateTimeEvent(Event event) {
         if (event.getStartDate().isAfter(event.getFinishDate())) {
-            LOGGER.warn("Incorrect event time");
+            log.info("Incorrect event time");
             throw new EventValidatorException("Incorrect event time");
         }
     }
@@ -69,7 +69,7 @@ public class EventValidator implements Validator<Event> {
                 .getStartDate().plus(sortedPresentations.get(sortedPresentations.size() - 1).getDuration());
 
         if (startTimeFirst.isBefore(event.getStartDate()) || endTimeLast.isAfter(event.getFinishDate())) {
-            LOGGER.warn("Invalid presentation time or duration(event time limit)");
+            log.info("Invalid presentation time or duration(event time limit)");
             throw new EventValidatorException("Invalid presentation time or duration(event time limit)");
         }
         if (sortedPresentations.size() == 1) {
@@ -80,7 +80,7 @@ public class EventValidator implements Validator<Event> {
                     .plus(sortedPresentations.get(i - 1).getDuration());
             LocalDateTime currentPresentationStartTime = sortedPresentations.get(i).getStartDate();
             if (previousPresentationEndTime.isAfter(currentPresentationStartTime)) {
-                LOGGER.warn("Invalid presentation time or duration");
+                log.info("Invalid presentation time or duration");
                 throw new EventValidatorException("Invalid presentation time or duration");
             }
         }

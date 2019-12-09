@@ -1,5 +1,6 @@
 package ua.dmytrokashchenko.conferencesms.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,17 +14,11 @@ import ua.dmytrokashchenko.conferencesms.service.mapper.MessageMapper;
 
 @Log4j
 @Service
+@RequiredArgsConstructor
 public class EmailSenderServiceImpl implements EmailSenderService {
     private final JavaMailSender javaMailSender;
     private final MessageRepository messageRepository;
     private final MessageMapper messageMapper;
-
-    public EmailSenderServiceImpl(JavaMailSender javaMailSender, MessageRepository messageRepository,
-                                  MessageMapper messageMapper) {
-        this.javaMailSender = javaMailSender;
-        this.messageRepository = messageRepository;
-        this.messageMapper = messageMapper;
-    }
 
     private void sendMessage(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();

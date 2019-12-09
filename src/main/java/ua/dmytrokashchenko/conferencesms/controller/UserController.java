@@ -1,5 +1,6 @@
 package ua.dmytrokashchenko.conferencesms.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -15,14 +16,10 @@ import ua.dmytrokashchenko.conferencesms.service.UserService;
 import javax.validation.Valid;
 
 @Controller
+@RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
     private final PresentationService presentationService;
-
-    public UserController(UserService userService, PresentationService presentationService) {
-        this.userService = userService;
-        this.presentationService = presentationService;
-    }
 
     @GetMapping("/registration")
     public String registration(User user) {
@@ -59,5 +56,4 @@ public class UserController {
         presentationService.ratePresentation(user, rating, presentationId);
         return "redirect:/events/past/" + eventId;
     }
-
 }

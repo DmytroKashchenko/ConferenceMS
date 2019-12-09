@@ -1,7 +1,7 @@
 package ua.dmytrokashchenko.conferencesms.service.impl;
 
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,26 +21,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+@Log4j
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private static final Logger LOGGER = Logger.getLogger(UserServiceImpl.class);
-
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserMapper userMapper;
 
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository,
-                           BCryptPasswordEncoder bCryptPasswordEncoder, UserMapper userMapper) {
-        this.userRepository = userRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.userMapper = userMapper;
-    }
-
     @Override
     public void register(User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            LOGGER.info("User with this email is already registered");
+            log.info("User with this email is already registered");
             throw new UserServiceException("User with this email is already registered");
         }
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
@@ -48,57 +40,37 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User login(String email, String password) {
-        UserEntity userEntity = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserServiceException("Can't find user with such email or password"));
-        boolean correctPassword = bCryptPasswordEncoder.matches(password, userEntity.getPassword());
-        if (!correctPassword) {
-            LOGGER.warn("Can't find user with such email or password");
-            throw new UserServiceException("Can't find user with such email or password");
-        }
-        return userMapper.mapEntityToUser(userEntity);
-    }
-
-    @Override
     public User getById(Long id) {
         if (id <= 0) {
-            LOGGER.warn("Invalid id");
+            log.warn("Invalid id");
             throw new UserServiceException("Invalid id");
         }
-        return userMapper.mapEntityToUser(userRepository.findById(id).orElseThrow(() ->
-                new UserServiceException("Empty user")));
+        return userMapper.mapEntityToUser(userRepository.findById(id)
+                .orElseThrow(() -> new UserServiceException("No such user")));
     }
 
     @Override
     public User getByEmail(String email) {
-        UserEntity entity = userRepository.findByEmail(email).orElseThrow(() -> new UserServiceException("Wrong email"));
+        if (email == null || email.isEmpty()) {
+            log.warn("Invalid email");
+            throw new UserServiceException("Invalid email");
+        }
+        UserEntity entity = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserServiceException("Wrong email"));
         return userMapper.mapEntityToUser(entity);
     }
 
     @Override
     public void update(User user) {
         if (user == null) {
-            LOGGER.warn("Invalid user");
+            log.warn("Invalid user");
             throw new UserServiceException("Invalid user");
         }
         userRepository.save(userMapper.mapUserToEntity(user));
     }
 
     @Override
-    public void deleteById(Long id) {
-        if (id <= 0 || !userRepository.findById(id).isPresent()) {
-            LOGGER.warn("Invalid id");
-            throw new UserServiceException("Invalid id");
-        }
-        userRepository.deleteById(id);
-    }
-
-    @Override
     public Page<User> getUsers(Pageable pageable) {
-        if (pageable == null) {
-            LOGGER.warn("Invalid page");
-            throw new UserServiceException("Invalid page");
-        }
         return userRepository.findAll(pageable).map(userMapper::mapEntityToUser);
     }
 
@@ -111,7 +83,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Map<User, Double> getSpeakerRatings(Set<User> users) {
         if (users == null) {
-            LOGGER.warn("Invalid users");
+            log.warn("Invalid users");
             throw new UserServiceException("Invalid users");
         }
         Map<User, Double> ratings = new HashMap<>();
@@ -122,7 +94,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean isRegistered(User user) {
         if (user == null) {
-            LOGGER.warn("Invalid user");
+            log.warn("Invalid user");
             throw new UserServiceException("Invalid user");
         }
         return userRepository.findByEmail(user.getEmail()).isPresent();
@@ -131,7 +103,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean isRegistered(String email) {
         if (email == null || email.isEmpty()) {
-            LOGGER.warn("Invalid email");
+            log.warn("Invalid email");
             throw new UserServiceException("Invalid email");
         }
         return userRepository.findByEmail(email).isPresent();

@@ -1,5 +1,6 @@
 package ua.dmytrokashchenko.conferencesms.service.mapper;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ua.dmytrokashchenko.conferencesms.domain.Presentation;
 import ua.dmytrokashchenko.conferencesms.domain.PresentationStatus;
@@ -13,12 +14,9 @@ import java.util.Map;
 import java.util.Set;
 
 @Component
+@RequiredArgsConstructor
 public class PresentationMapper {
     private final UserMapper userMapper;
-
-    public PresentationMapper(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
 
     public Presentation mapEntityToPresentation(PresentationEntity presentationEntity) {
         return Presentation.builder()

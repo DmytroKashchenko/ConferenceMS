@@ -6,6 +6,7 @@ import ua.dmytrokashchenko.conferencesms.entity.BonusEntity;
 
 @Component
 public class BonusMapper {
+
     public Bonus mapEntityToBonus(BonusEntity bonusEntity) {
         return new Bonus(bonusEntity.getId(), bonusEntity.getRating(), bonusEntity.getCoefficient());
     }

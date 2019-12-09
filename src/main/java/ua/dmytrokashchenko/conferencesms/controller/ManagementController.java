@@ -1,5 +1,6 @@
 package ua.dmytrokashchenko.conferencesms.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -25,6 +26,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/management")
 public class ManagementController {
 
@@ -34,17 +36,6 @@ public class ManagementController {
     private final BonusService bonusService;
     private final EmailSenderService emailSenderService;
     private final PresentationService presentationService;
-
-    public ManagementController(AddressService addressService, EventService eventService,
-                                UserService userService, BonusService bonusService,
-                                EmailSenderService emailSenderService, PresentationService presentationService) {
-        this.addressService = addressService;
-        this.eventService = eventService;
-        this.userService = userService;
-        this.bonusService = bonusService;
-        this.emailSenderService = emailSenderService;
-        this.presentationService = presentationService;
-    }
 
     @GetMapping("/address_add")
     public String addAddress() {

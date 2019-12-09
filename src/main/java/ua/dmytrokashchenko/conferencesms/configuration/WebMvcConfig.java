@@ -29,7 +29,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public SpringSecurityDialect springSecurityDialect(){
+    public SpringSecurityDialect springSecurityDialect() {
         return new SpringSecurityDialect();
     }
 

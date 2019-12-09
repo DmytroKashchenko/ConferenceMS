@@ -1,12 +1,12 @@
 package ua.dmytrokashchenko.conferencesms.service.impl;
 
-import org.apache.log4j.Logger;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Service;
 import ua.dmytrokashchenko.conferencesms.domain.Event;
 import ua.dmytrokashchenko.conferencesms.domain.Presentation;
 import ua.dmytrokashchenko.conferencesms.domain.PresentationStatus;
 import ua.dmytrokashchenko.conferencesms.domain.User;
-import ua.dmytrokashchenko.conferencesms.entity.PresentationEntity;
 import ua.dmytrokashchenko.conferencesms.entity.PresentationStatusEntity;
 import ua.dmytrokashchenko.conferencesms.entity.UserEntity;
 import ua.dmytrokashchenko.conferencesms.repository.PresentationRepository;
@@ -17,51 +17,25 @@ import ua.dmytrokashchenko.conferencesms.service.exceptions.PresentationServiceE
 import ua.dmytrokashchenko.conferencesms.service.mapper.PresentationMapper;
 import ua.dmytrokashchenko.conferencesms.service.mapper.UserMapper;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Log4j
 @Service
+@RequiredArgsConstructor
 public class PresentationServiceImpl implements PresentationService {
-    private static final Logger LOGGER = Logger.getLogger(PresentationServiceImpl.class);
-
     private final PresentationRepository presentationRepository;
     private final PresentationMapper presentationMapper;
     private final UserMapper userMapper;
     private final EventService eventService;
     private final UserService userService;
 
-    public PresentationServiceImpl(PresentationRepository presentationRepository,
-                                   PresentationMapper presentationMapper, UserMapper userMapper,
-                                   EventService eventService, UserService userService) {
-        this.presentationRepository = presentationRepository;
-        this.presentationMapper = presentationMapper;
-        this.userMapper = userMapper;
-        this.eventService = eventService;
-        this.userService = userService;
-    }
-
-    @Override
-    public Presentation getPresentationById(Long id) {
-        if (id == null) {
-            LOGGER.warn("Invalid id");
-            throw new PresentationServiceException("Invalid id");
-        }
-        Optional<PresentationEntity> optionalEntity = presentationRepository.findById(id);
-        if (!optionalEntity.isPresent()) {
-            LOGGER.warn("No presentations with ID: " + id);
-            throw new PresentationServiceException("No presentations with ID:" + id);
-        }
-        PresentationEntity presentationEntity = optionalEntity.get();
-        return presentationMapper.mapEntityToPresentation(presentationEntity);
-    }
-
     @Override
     public List<Presentation> getPresentationsByAuthorAndStatus(User author, PresentationStatus status) {
         if (author == null || status == null) {
-            return Collections.emptyList();
+            log.warn("Invalid author or status");
+            throw new PresentationServiceException("Invalid author or status");
         }
         PresentationStatusEntity presentationStatusEntity = PresentationStatusEntity.valueOf(status.name());
         UserEntity userEntity = userMapper.mapUserToEntity(author);
@@ -74,7 +48,7 @@ public class PresentationServiceImpl implements PresentationService {
     @Override
     public Set<Long> getPresentationsIdsOnUserIsRegistered(Long userId) {
         if (userId == null || userId <= 0) {
-            LOGGER.warn("Invalid id");
+            log.warn("Invalid id");
             throw new PresentationServiceException("Invalid id");
         }
         return presentationRepository.findPresentationsIdsOnUserIsRegistered(userId);
@@ -82,10 +56,14 @@ public class PresentationServiceImpl implements PresentationService {
 
     @Override
     public void registerForPresentation(Long presentationId, User user) {
+        if (presentationId == null || user == null) {
+            log.warn("Invalid user or presentation id");
+            throw new PresentationServiceException("Invalid user or presentation id");
+        }
         Event event = eventService.getEventByPresentationId(presentationId);
         Presentation presentation = event.getPresentationById(presentationId);
         if (presentation.getRegistrations().get(user) != null) {
-            LOGGER.warn("User is already registered for the presentation");
+            log.info("User is already registered for the presentation");
             throw new PresentationServiceException("User is already registered for the presentation");
         }
         presentation.addRegistration(user);
@@ -94,10 +72,18 @@ public class PresentationServiceImpl implements PresentationService {
 
     @Override
     public void ratePresentation(User user, Integer rating, Long presentationId) {
+        if (user == null || rating == null) {
+            log.warn("Invalid rating or user");
+            throw new PresentationServiceException("Invalid rating or user");
+        }
         Event event = eventService.getEventByPresentationId(presentationId);
         Presentation presentation = event.getPresentationById(presentationId);
+        if (presentation == null) {
+            log.warn("No such presentation");
+            throw new PresentationServiceException("No such presentation");
+        }
         if (presentation.getRegistrations().get(user) == null || !presentation.getRegistrations().get(user)) {
-            LOGGER.warn("User isn't a visitor");
+            log.warn("User isn't a visitor");
             throw new PresentationServiceException("User isn't a visitor");
         }
         presentation.addUserRating(user, rating);
@@ -110,11 +96,11 @@ public class PresentationServiceImpl implements PresentationService {
         Presentation presentation = event.getPresentationById(presentationId);
         User user = userService.getById(userId);
         if (presentation.getRegistrations().get(user) == null) {
-            LOGGER.warn("User not registered");
+            log.warn("User not registered");
             throw new PresentationServiceException("User not registered");
         }
         if (presentation.getRegistrations().get(user)) {
-            LOGGER.warn("User is already a visitor");
+            log.warn("User is already a visitor");
             throw new PresentationServiceException("User is already a visitor");
         }
         presentation.getRegistrations().put(user, true);

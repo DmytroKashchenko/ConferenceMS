@@ -10,17 +10,14 @@ import java.util.Map;
 import java.util.Set;
 
 public interface UserService extends UserDetailsService {
-    void register(User user);
 
-    User login(String email, String password);
+    void register(User user);
 
     User getById(Long id);
 
     User getByEmail(String email);
 
     void update(User user);
-
-    void deleteById(Long id);
 
     Page<User> getUsers(Pageable pageable);
 

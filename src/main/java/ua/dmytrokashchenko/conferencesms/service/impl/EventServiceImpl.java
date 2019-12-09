@@ -1,6 +1,7 @@
 package ua.dmytrokashchenko.conferencesms.service.impl;
 
-import org.apache.log4j.Logger;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -15,19 +16,14 @@ import ua.dmytrokashchenko.conferencesms.service.validator.Validator;
 import java.time.LocalDateTime;
 import java.util.function.BiFunction;
 
-@Service
-public class EventServiceImpl implements EventService {
-    private static final Logger LOGGER = Logger.getLogger(EventServiceImpl.class);
 
+@Log4j
+@Service
+@RequiredArgsConstructor
+public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
     private final Validator<Event> eventValidator;
-
-    public EventServiceImpl(EventRepository eventRepository, EventMapper eventMapper, Validator<Event> eventValidator) {
-        this.eventRepository = eventRepository;
-        this.eventMapper = eventMapper;
-        this.eventValidator = eventValidator;
-    }
 
     @Override
     public void save(Event event) {
@@ -38,11 +34,11 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event getById(Long id) {
         if (id == null || id < 0) {
-            LOGGER.warn("Invalid id");
+            log.warn("Invalid id");
             throw new EventServiceException("Invalid id");
         }
         if (!eventRepository.findById(id).isPresent()) {
-            LOGGER.warn("No event with this id");
+            log.info("No event with this id");
             throw new EventServiceException("No event with this id");
         }
         return eventMapper.mapEntityToEvent(eventRepository.findById(id).get());
@@ -51,11 +47,11 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event getEventByPresentationId(Long id) {
         if (id == null || id < 0) {
-            LOGGER.warn("Invalid id");
+            log.warn("Invalid id");
             throw new EventServiceException("Invalid id");
         }
         if (!eventRepository.findEventEntityByPresentationEntityId(id).isPresent()) {
-            LOGGER.warn("No event with this presentation");
+            log.info("No event with this presentation");
             throw new EventServiceException("No event with this presentation");
         }
         return eventMapper.mapEntityToEvent(eventRepository.findEventEntityByPresentationEntityId(id).get());
@@ -73,8 +69,8 @@ public class EventServiceImpl implements EventService {
 
     private Page<Event> getEvents(Pageable pageable, BiFunction<LocalDateTime, Pageable, Page<EventEntity>> function) {
         if (pageable == null) {
-            LOGGER.warn("Pageable object is null");
-            throw new EventServiceException("Pageable object is null");
+            log.warn("Pageable object invalid");
+            throw new EventServiceException("Pageable object invalid");
         }
         LocalDateTime now = LocalDateTime.now();
         return function.apply(now, pageable)

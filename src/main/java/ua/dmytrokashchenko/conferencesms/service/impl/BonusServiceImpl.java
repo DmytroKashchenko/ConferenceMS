@@ -1,5 +1,6 @@
 package ua.dmytrokashchenko.conferencesms.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Service;
 import ua.dmytrokashchenko.conferencesms.domain.Bonus;
@@ -14,14 +15,10 @@ import java.util.stream.Collectors;
 
 @Log4j
 @Service
+@RequiredArgsConstructor
 public class BonusServiceImpl implements BonusService {
     private final BonusRepository bonusRepository;
     private final BonusMapper bonusMapper;
-
-    public BonusServiceImpl(BonusRepository bonusRepository, BonusMapper bonusMapper) {
-        this.bonusRepository = bonusRepository;
-        this.bonusMapper = bonusMapper;
-    }
 
     @Override
     public void saveRecord(Bonus bonus) {
@@ -39,8 +36,8 @@ public class BonusServiceImpl implements BonusService {
             throw new BonusServiceException("invalid id");
         }
         if (!bonusRepository.findById(id).isPresent()) {
-            log.warn("No record with this id");
-            throw new BonusServiceException("No record with this id");
+            log.info("No record with this id" + id);
+            throw new BonusServiceException("No record with this id" + id);
         }
         bonusRepository.deleteById(id);
     }

@@ -1,5 +1,6 @@
 package ua.dmytrokashchenko.conferencesms.service.mapper;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ua.dmytrokashchenko.conferencesms.domain.Message;
 import ua.dmytrokashchenko.conferencesms.entity.MessageEntity;
@@ -7,12 +8,9 @@ import ua.dmytrokashchenko.conferencesms.entity.MessageEntity;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class MessageMapper {
     private final UserMapper userMapper;
-
-    public MessageMapper(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
 
     public Message mapEntityToMessage(MessageEntity entity) {
         return Message.builder()

@@ -5,7 +5,6 @@ import org.springframework.data.domain.Pageable;
 import ua.dmytrokashchenko.conferencesms.domain.Address;
 
 public interface AddressService {
-    Address addAddress(Address address);
 
     void saveAddress(Address address);
 

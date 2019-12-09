@@ -1,5 +1,6 @@
 package ua.dmytrokashchenko.conferencesms.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,14 +22,10 @@ import java.util.List;
 import java.util.Set;
 
 @Controller
+@RequiredArgsConstructor
 public class EventsController {
     private final EventService eventService;
     private final PresentationService presentationService;
-
-    public EventsController(EventService eventService, PresentationService presentationService) {
-        this.eventService = eventService;
-        this.presentationService = presentationService;
-    }
 
     @GetMapping("/")
     public ModelAndView upcomingEvents(
