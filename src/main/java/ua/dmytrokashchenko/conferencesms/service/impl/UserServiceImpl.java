@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
             throw new UserServiceException("Invalid email");
         }
         UserEntity entity = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserServiceException("Wrong email"));
+                .orElseThrow(() -> new UserServiceException("No user with such email"));
         return userMapper.mapEntityToUser(entity);
     }
 
@@ -65,6 +65,10 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             log.warn("Invalid user");
             throw new UserServiceException("Invalid user");
+        }
+        if (!userRepository.findById(user.getId()).isPresent()) {
+            log.warn("No such user");
+            throw new UserServiceException("No such user");
         }
         userRepository.save(userMapper.mapUserToEntity(user));
     }
@@ -110,8 +114,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userMapper.mapEntityToUser(userRepository.findByEmail(username)
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userMapper.mapEntityToUser(userRepository.findByEmail(email)
                 .orElseThrow(UserServiceException::new));
     }
 }
