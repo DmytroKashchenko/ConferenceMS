@@ -35,7 +35,7 @@ public class AddressServiceImpl implements AddressService {
         }
         if (!addressRepository.findById(id).isPresent()) {
             log.info("No address with this id: " + id);
-            throw new AddressServiceException("No address with this id" + id);
+            throw new AddressServiceException("No address with this id");
         }
         return addressMapper.mapEntityToAddress(addressRepository.findById(id).get());
     }

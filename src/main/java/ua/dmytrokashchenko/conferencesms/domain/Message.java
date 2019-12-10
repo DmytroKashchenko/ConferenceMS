@@ -1,5 +1,6 @@
 package ua.dmytrokashchenko.conferencesms.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -10,6 +11,7 @@ import java.util.Set;
 
 @Data
 @Builder
+@AllArgsConstructor
 public class Message {
     private Long id;
 

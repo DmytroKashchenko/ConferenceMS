@@ -1,6 +1,6 @@
 package ua.dmytrokashchenko.conferencesms.service.validator;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ua.dmytrokashchenko.conferencesms.domain.Role;
 import ua.dmytrokashchenko.conferencesms.domain.User;
@@ -10,9 +10,9 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 @Component
+@RequiredArgsConstructor
 public class AuthorEmailValidator implements ConstraintValidator<AuthorEmail, String> {
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @Override
     public void initialize(AuthorEmail constraintAnnotation) {

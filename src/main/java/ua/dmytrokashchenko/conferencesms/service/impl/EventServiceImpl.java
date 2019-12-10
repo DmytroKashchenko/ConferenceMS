@@ -16,7 +16,6 @@ import ua.dmytrokashchenko.conferencesms.service.validator.Validator;
 import java.time.LocalDateTime;
 import java.util.function.BiFunction;
 
-
 @Log4j
 @Service
 @RequiredArgsConstructor

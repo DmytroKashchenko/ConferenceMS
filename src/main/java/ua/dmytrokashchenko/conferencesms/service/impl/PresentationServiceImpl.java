@@ -62,6 +62,10 @@ public class PresentationServiceImpl implements PresentationService {
         }
         Event event = eventService.getEventByPresentationId(presentationId);
         Presentation presentation = event.getPresentationById(presentationId);
+        if (presentation == null) {
+            log.warn("No such presentation");
+            throw new PresentationServiceException("No such presentation");
+        }
         if (presentation.getRegistrations().get(user) != null) {
             log.info("User is already registered for the presentation");
             throw new PresentationServiceException("User is already registered for the presentation");
